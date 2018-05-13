@@ -1,0 +1,337 @@
+<div class="easyui-layout" data-options="fit:true">
+    <!-- Begin of toolbar -->
+    <div id="classes-toolbar-2">
+        <div class="wu-toolbar-button">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd4()" plain="true">添加</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit4()" plain="true">修改</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="remove4()" plain="true">删除</a>
+        </div>
+    </div>
+    <div class="wu-toolbar-search">
+        <label>会议室：</label>
+        <select class="" panelHeight="auto" id="cla-classes">
+            <!--<option value="0">张三</option>
+            <option value="1">李四</option>-->
+        </select>
+        <a href="javascript:searchClass()" class="easyui-linkbutton" iconCls="icon-search">开始检索</a>
+    </div>
+    <!-- End of toolbar -->
+    <table id="classes-datagrid-2" class="easyui-datagrid" toolbar="#classes-toolbar-2"></table>
+</div>
+<!-- Begin of easyui-dialog -->
+<div id="classes-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+    <form id="classes-form-2" method="post" action="message/save.action">
+        <table>
+            <tr>
+                <td align="right">会议室:</td>
+                <td>
+                    <select name="mBId" id="cla-classes1" style="width:268px;">
+
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td width="60" align="right">留言内容:</td>
+                <td><textarea name="mDescribe" rows="3" class="wu-text"></textarea></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="classes-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+    <form id="classes-form-3" method="post" action="message/update.action">
+        <table>
+            <tr>
+                <td align="right">会议室:</td>
+                <td>
+                    <select name="mBId" id="mBId" style="width:268px;">
+
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td width="60" align="right">留言内容:</td>
+                <td><textarea name="mDescribe" rows="3" class="wu-text" id="mDescribe"></textarea></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!-- End of easyui-dialog -->
+<script type="text/javascript">
+    $(function(){
+        /**
+         * Name 载入数据
+         */
+        $('#classes-datagrid-2').datagrid({
+            loadFilter:pagerFilter,
+            rownumbers:true,
+            singleSelect:true,
+            pageSize:20,
+            pagination:true,
+            multiSort:true,
+            fitColumns:true,
+            fit:true,
+            height:485,
+            columns:[[
+                { checkbox:true},
+                { field:'mId',title:'留言编号',width:150,sortable:true},
+                { field:'mDescribe',title:'留言内容',width:180,sortable:true},
+                { field:'mUId',title:'留言用户',width:100},
+            ]]
+        });
+    })
+	/**
+	* Name 添加记录
+	*/
+	function add(){
+		$('#classes-form-2').form('submit', {
+			url:'',
+			success:function(data){
+				if(data){
+					$.messager.alert('信息提示','提交成功！','info');
+					$('#classes-dialog-2').dialog('close');
+					getData();
+				}
+				else
+				{
+					$.messager.alert('信息提示','提交失败！','info');
+				}
+			}
+		});
+	}
+	
+	/**
+	* Name 修改记录
+	*/
+	function edit(){
+		$('#classes-form-3').form('submit', {
+			url:'',
+			success:function(data){
+                data = JSON.parse(data);
+                if(data.status == 'success'){
+					$.messager.alert('信息提示','提交成功！','info');
+					$('#classes-dialog-3').dialog('close');
+					getData();
+				}
+				else
+				{
+					$.messager.alert('信息提示','提交失败！','info');
+				}
+			}
+		});
+	}
+	
+	/**
+	* Name 删除记录
+	*/
+	function remove4(){
+		$.messager.confirm('信息提示','确定要删除该记录？', function(result){
+			if(result){
+                var item = $('#classes-datagrid-2').datagrid('getSelected');
+				// var items = $('#classes-datagrid-2').datagrid('getSelections');
+				// var ids = [];
+				// $(items).each(function(){
+				// 	ids.push(this.productid);
+				// });
+				//alert(ids);return;
+				$.ajax({
+					url:'./curriculum/delete.action',
+					data:{
+					    currId:item.currId
+                    },
+					success:function(data){
+                        data = JSON.parse(data);
+                        if(data.status == 'success'){
+							$.messager.alert('信息提示','删除成功！','info');
+							getData();
+						}
+						else
+						{
+							$.messager.alert('信息提示','删除失败！','info');		
+						}
+					}	
+				});
+			}	
+		});
+	}
+	
+	/**
+	* Name 打开添加窗口
+	*/
+	function openAdd4(){
+		$('input[name="currName"]').val('');
+		$('#classes-dialog-2').dialog({
+			closed: false,
+			modal:true,
+            title: "添加信息",
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: add
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#classes-dialog-2').dialog('close');                    
+                }
+            }]
+        });
+	}
+	
+	/**
+	* Name 打开修改窗口
+	*/
+	function openEdit4(){
+		// $('#classes-form-2').form('clear');
+		var item = $('#classes-datagrid-2').datagrid('getSelected');
+		//alert(item.productid);return;
+		$.ajax({
+			url:'./curriculum/getById.action',
+			data:{
+                currId:item.currId
+            },
+			success:function(data){
+                data = JSON.parse(data);
+                if(data.status == 'success'){
+                    var obj = data.date;
+                    $('#mId').val(obj.mId);
+                    $('#mBId').val(obj.mBId);
+                    $('#mUId').val(obj.mUId.uId);
+                    $('#mDescribe').val(obj.mDescribe);
+                    $('#classes-dialog-3').dialog({
+                        closed: false,
+                        modal:true,
+                        title: "修改信息",
+                        buttons: [{
+                            text: '确定',
+                            iconCls: 'icon-ok',
+                            handler: edit
+                        }, {
+                            text: '取消',
+                            iconCls: 'icon-cancel',
+                            handler: function () {
+                                $('#classes-dialog-3').dialog('close');
+                            }
+                        }]
+                    });
+				}
+				else{
+				}
+			}	
+		});
+	}
+	
+	/**
+	* Name 分页过滤器
+	*/
+	function pagerFilter(data){            
+		if (typeof data.length == 'number' && typeof data.splice == 'function'){// is array                
+			data = {                   
+				total: data.length,                   
+				rows: data               
+			}            
+		}        
+		var dg = $(this);         
+		var opts = dg.datagrid('options');          
+		var pager = dg.datagrid('getPager');          
+		pager.pagination({                
+			onSelectPage:function(pageNum, pageSize){                 
+				opts.pageNumber = pageNum;                   
+				opts.pageSize = pageSize;                
+				pager.pagination('refresh',{pageNumber:pageNum,pageSize:pageSize});                  
+				dg.datagrid('loadData',data);                
+			}          
+		});           
+		if (!data.originalRows){               
+			data.originalRows = (data.rows);       
+		}         
+		var start = (opts.pageNumber-1)*parseInt(opts.pageSize);          
+		var end = start + parseInt(opts.pageSize);        
+		data.rows = (data.originalRows.slice(start, end));         
+		return data;       
+	}
+
+    function getData(){
+	    $('#classWord').val('');
+        //获取教师列表
+        $.ajax({
+            type:"get",
+            async:true,
+            url:"./message/listAll.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    rows = data.data;
+                    for(var i=0;i<rows.length;i++){
+                        rows[i].mUId = rows[i].mUId.uName;
+                    }
+                    $('#classes-datagrid-2').datagrid('loadData', rows);
+                    
+                }else{
+                    //没有数据或服务器错误
+                    $.messager.alert('信息提示','暂无数据！','info');
+                }
+                getRooms();
+            }
+        });
+    }
+    getData();
+	function getRooms(){
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./boardroom/listAll.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    rows = data.data;
+                    var html = '';
+                    for(var i = 0 ; i < rows.length; i++){
+                        if(i == 0){
+                            html += '<option value="'+rows[i].tId+'" selected>'+rows[i].tRealName+'</option>';
+                        }else{
+                            html += '<option value="'+rows[i].tId+'">'+rows[i].tRealName+'</option>';
+                        }
+                    }
+                    $('#cla-classes').empty().append(html);
+                    $('#cla-classes1').empty().append(html);
+                    $('#mBId').empty().append(html);
+                }else{
+                    //没有数据或服务器错误
+                    $.messager.alert('信息提示','暂无数据！','info');
+                }
+            }
+        });
+    }
+    function searchClass(){
+        $.ajax({
+            type:"get",
+            async:true,
+            url:"./message/searchAll.action",
+            dataType:"json",
+            data:{
+                mBId:$('#mBId').val(),
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    rows = data.data;
+                    for(var i=0;i<rows.length;i++){
+                        rows[i].mUId = rows[i].mUId.uName;
+                    }
+                    $('#classes-datagrid-2').datagrid('loadData', rows);
+                }else{
+                    //没有数据或服务器错误
+                    $.messager.alert('信息提示','暂无数据！','info');
+                }
+            }
+        });
+    }
+
+</script>
