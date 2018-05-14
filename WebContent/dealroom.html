@@ -16,17 +16,66 @@
                     <tr>
                         <td>开始时间:</td>
                         <td>
-                            <input class="easyui-datetimebox" name="resStarttime" value="" style="width:200px;height:35px;">
+                            <input class="easyui-datetimebox" name="resStarttime" id="starttime" value="" style="width:200px;height:35px;">
                         </td>
                     </tr>
                     <tr>
                         <td>结束时间:</td>
-                        <td><input class="easyui-datetimebox" name="resEndtime" value="" style="width:200px;height:35px;"></td>
+                        <td><input class="easyui-datetimebox" name="resEndtime" id="endtime" value="" style="width:200px;height:35px;"></td>
                     </tr>
                     <tr>
                         <td>会议室:</td>
                         <td>
-                            <select class="easyui-combobox" name="resBId" id="rooms" style="width:200px;height:35px;"></select>
+                            <table id="in-table">
+                                <!--<tr>
+                                    <td>
+                                        <div style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">
+                                            <p>会议室1</p>
+                                            <p>可容纳<span id="num1">10人</span></p>
+                                            <p>实验楼403</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">
+                                            <p>会议室1</p>
+                                            <p>可容纳<span id="num2">10人</span></p>
+                                            <p>实验楼403</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">
+                                            <p>会议室1</p>
+                                            <p>可容纳<span id="num3">10人</span></p>
+                                            <p>实验楼403</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">
+                                            <p>会议室1</p>
+                                            <p>可容纳<span id="num4">10人</span></p>
+                                            <p>实验楼403</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">
+                                            <p>会议室1</p>
+                                            <p>可容纳<span id="num5">10人</span></p>
+                                            <p>实验楼403</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">
+                                            <p>会议室1</p>
+                                            <p>可容纳<span id="num6">10人</span></p>
+                                            <p>实验楼403</p>
+                                        </div>
+                                    </td>
+                                </tr>-->
+
+                            </table>
+                            <input type="hidden" name="bId" style="width:200px;height:35px;">
                         </td>
                     </tr>
                     <tr>
@@ -141,6 +190,9 @@
         $('#resUId').val(loginUser.uName);
         $('input[name="resDId"]').val(loginUser.uDId.dId);
         $('input[name="resUId"]').val(loginUser.uId);
+        $(document).on('change','#endtime',function(){
+            getRooms();
+        })
     });
     function getData(){
     	//获取用户列表
@@ -343,28 +395,52 @@
         $.ajax({
             type:"get",
             async:true,
-            url:"./department/listAll.action",
+            url:"./boardroom/searchByTime.action",
             dataType:"json",
-            data:{},
+            data:{
+                resStarttime:$('#starttime').val(),
+                resEndtime:$('#endtime').val()
+            },
             success:function(data){
                 console.log(data);
                 if(data.status == 'success'){
                     var rows = [];
                     rows = data.data;
-                    var html = '';
+                    var html = '<tr>';
                     for(var i = 0 ; i < rows.length ; i++){
-                        if(i == 0){
-                            html += '<option value="'+rows[i].bId+'" selected>'+rows[i].bName+'</option>';
+                        var item = rows[i];
+                        if((i+1)%5 === 0){
+                            html += '<tr>';
+                        }
+                        html += '<td onclick="chooseRoom(\''+item.bId+'\')">';
+                        html += '<div id="tb_'+item.bId+'" style="width: 100px;height: 100px;border: 1px solid #cccccc;text-align: center;">';
+                        html += '<p>'+item.bName+'</p>';
+                        html += '<p>可容纳<span>'+item.bNum+'</span>人</p>';
+                        html += '<p>'+item.bAdd+'</p>';
+                        if(item.bEquipment == 1){
+                            html += '<p>有投影仪</p>';
                         }else{
-                            html += '<option value="'+rows[i].bId+'">'+rows[i].bName+'</option>';
+                            html += '<p>无投影仪</p>';
+                        }
+                        html += '</div>';
+                        html += '</td>';
+                        if((i+1)%5 === 0){
+                            html += '</tr>';
                         }
                     }
-                    $('#rooms').empty().append(html);
+                    $('#in-table').empty().append(html);
                 }else{
                     //没有数据或服务器错误
                 }
             }
         });
+    }
+    function chooseRoom(bid){
+        $('#tb_'+bid).css('border','1px solid #32cd99');
+        $('#in-table tr td div').each(function(index,item){
+            $(this).css('border','1px solid #cccccc');
+        });
+        $('input[name="bId"]').val(bid);
     }
 
 </script>
