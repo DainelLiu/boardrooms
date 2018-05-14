@@ -167,7 +167,7 @@
             if (endEditing()){
                 $('#dg').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'bDescribe'});
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'dDescribe'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
@@ -244,7 +244,7 @@
             console.log(row);
             //发ajax请求后台
           //发ajax请求后台
-            if(row.bId == '' || row.bId == null){
+            if(row.dId == '' || row.dId == null){
             	$.ajax({
         			type:"post",
         			async:true,
@@ -267,11 +267,13 @@
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./brand/update.action",
+        			url:"./department/update.action",
         			dataType:"json",
         			data:{
-        				bId:row.bId,
-       					bDescribe:row.bDescribe
+        				dId:row.dId,
+        				dName:row.dName,
+        				dDescribe:row.dDescribe,
+        				dNumber:row.dNumber
         			},
         			success:function(data){
         				if(data.status == 'success'){
