@@ -406,9 +406,12 @@
                 if(data.status == 'success'){
                     var rows = [];
                     rows = data.data;
-                    var html = '<tr>';
+                    var html = '';
                     for(var i = 0 ; i < rows.length ; i++){
                         var item = rows[i];
+                        if(i == 0){
+                            html += '<tr>';
+                        }
                         if((i+1)%5 === 0){
                             html += '<tr>';
                         }
@@ -425,6 +428,9 @@
                         html += '</div>';
                         html += '</td>';
                         if((i+1)%5 === 0){
+                            html += '</tr>';
+                        }
+                        if(i == 0){
                             html += '</tr>';
                         }
                     }
