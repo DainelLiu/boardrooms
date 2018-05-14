@@ -96,11 +96,15 @@
                     </a>
                 </li>
                  <li class="firstMenu">
-                    <a href="javascript:void(0);" onclick="toPage('会议室预定','message.html',this);">
-                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
-                        <span class="sider-nav-title">预定情况</span>
-                        <i class="iconfont">&#xe642;</i>
-                    </a>
+                     <a href="javascript:;">
+                         <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                         <span class="sider-nav-title">会议室预定</span>
+                         <i class="iconfont">&#xe642;</i>
+                     </a>
+                     <ul class="sider-nav-s">
+                         <li><a href="javascript:void(0);" onclick="toPage('我要预定','index.html',this);">我要预定</a></li>
+                         <li><a href="javascript:void(0);" onclick="toPage('预订情况','reserve.html',this);">预订情况</a></li>
+                     </ul>
                 </li>
                  <li class="firstMenu">
                     <a href="javascript:void(0);" onclick="toPage('角色管理','role.html',this);">
@@ -267,7 +271,7 @@
     		success:function(data){
     			console.log(data);
     			if(data.status == 'success'){
-   					Util.clearLocalStorage();
+   					Util.clearSessionStorage();
    					window.location.href = 'login.html';
     			}else{
     				//没有数据或服务器错误
