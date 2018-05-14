@@ -185,13 +185,22 @@
 //                $('#rejectBtn').linkbutton('disable');
             }
         }).datagrid('clientPaging');
-        getRooms();
+        getAllRooms();
         $('#resDId').val(loginUser.uDId.dName);
         $('#resUId').val(loginUser.uName);
         $('input[name="resDId"]').val(loginUser.uDId.dId);
         $('input[name="resUId"]').val(loginUser.uId);
-        $(document).on('change','#endtime',function(){
-            getRooms();
+        $('#endtime').datetimebox({
+            stopFirstChangeEvent: true,
+            onChange: function() {
+                var options = $(this).datetimebox('options');
+                if(options.stopFirstChangeEvent) {
+                    options.stopFirstChangeEvent = false;
+                    return;
+                }
+                //以下写onchange的逻辑
+                getRooms();
+            }
         })
     });
     function getData(){
@@ -388,6 +397,55 @@
             $('#dg').datagrid('rejectChanges', rindex);
             getData();
         }
+    }
+
+    function getAllRooms(){
+        //获取用户列表
+        $.ajax({
+            type:"get",
+            async:true,
+            url:"./boardroom/listAll.action",
+            dataType:"json",
+            data:{
+                resStarttime:$('#starttime').val(),
+                resEndtime:$('#endtime').val()
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    rows = data.data;
+                    var html = '';
+                    for(var i = 0 ; i < rows.length ; i++){
+                        var item = rows[i];
+                        if(i == 0){
+                            html += '<tr>';
+                        }
+                        if(i%5 === 0){
+                            html += '<tr>';
+                        }
+                        html += '<td onclick="chooseRoom(\''+item.bId+'\')">';
+                        html += '<div id="tb_'+item.bId+'" style="width: 150px;height: 150px;border: 1px solid #cccccc;text-align: center;">';
+                        html += '<p>'+item.bName+'</p>';
+                        html += '<p>可容纳<span>'+item.bNum+'</span>人</p>';
+                        html += '<p>'+item.bAdd+'</p>';
+                        if(item.bEquipment == 1){
+                            html += '<p>有投影仪</p>';
+                        }else{
+                            html += '<p>无投影仪</p>';
+                        }
+                        html += '</div>';
+                        html += '</td>';
+                        if((i+1)%5 === 0){
+                            html += '</tr>';
+                        }
+                    }
+                    $('#in-table').empty().append(html);
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
     }
 
     function getRooms(){
