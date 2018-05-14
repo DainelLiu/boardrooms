@@ -272,5 +272,37 @@ public class BoardRoomAction {
 		return null;
 	}
 	
+	@Action(value="searchByTime")
+	public String searchByTime() throws IOException{
+		String resStarttime = ServletActionContext.getRequest().getParameter("resStarttime");
+		String resEndtime = ServletActionContext.getRequest().getParameter("resEndtime");
+		//String hql ="from BoardRoom where 1=1 and bName LIKE '%"+bName+"%' or bAdd LIKE '%"+bName+"%'";
+		/*
+			select * from boardroom where 1=1 and bSign = 1 
+	and bId not in (select resBId from reserve where 1=1 and resStarttime >= '2013-01-01 11:30:00' and resStarttime <= '2013-01-01 12:30:00' or 
+resEndtime >= '2013-01-01 11:30:00' and resEndtime <= '2013-01-01 12:30:00'
+)
+
+		 */
+		String hql ="from BoardRoom where 1=1 and bSign = 1 and bId not in (select resBId from Reserve where 1=1 and resStarttime <= '"
+				+resStarttime+"' and resStarttime >= '"+resEndtime+"'or resEndtime >= '"+resStarttime+"' and resEndtime <= '"+resEndtime+"')";
+		System.out.println(hql);
+		List<Object> boardroomTypelist = boardroomDao.getAllByConds(hql);
+		JSONObject jobj = new JSONObject();
+		if(boardroomTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(boardroomTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
 
 }

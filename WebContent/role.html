@@ -165,7 +165,7 @@
             if (endEditing()){
                 $('#dg').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'bDescribe'});
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'rName'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
@@ -188,7 +188,7 @@
             });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
             $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'rName'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
         }
     }
@@ -263,11 +263,11 @@
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./brand/update.action",
+        			url:"./role/update.action",
         			dataType:"json",
         			data:{
-        				bId:row.bId,
-       					bDescribe:row.bDescribe
+        				rId:row.rId,
+        				rName:row.rName
         			},
         			success:function(data){
         				if(data.status == 'success'){

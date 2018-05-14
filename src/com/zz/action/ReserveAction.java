@@ -12,7 +12,10 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
+import com.zz.dao.IBoardRoomDao;
+import com.zz.dao.IDepartmentDao;
 import com.zz.dao.IReserveDao;
+import com.zz.dao.IUsersDao;
 import com.zz.model.Reserve;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -35,6 +38,38 @@ public class ReserveAction {
 		this.reserveDao = reserveDao;
 	}
 	
+private IBoardRoomDao boardroomDao;
+	
+	public IBoardRoomDao getBoardRoomDao() {
+		return boardroomDao;
+	}
+	@Resource(name="BoardRoomDao")
+	public void setBoardRoomDao(IBoardRoomDao boardroomDao) {
+		this.boardroomDao = boardroomDao;
+	}
+	
+	private IDepartmentDao departmentDao;
+
+	public IDepartmentDao getDepartmentDao() {
+		return departmentDao;
+	}
+
+	@Resource(name = "DepartmentDao")
+	public void setDepartmentDao(IDepartmentDao departmentDao) {
+		this.departmentDao = departmentDao;
+	}
+	
+	private IUsersDao usersDao;
+
+	public IUsersDao getUsersDao() {
+		return usersDao;
+	}
+
+	@Resource(name = "UsersDao")
+	public void setUsersDao(IUsersDao usersDao) {
+		this.usersDao = usersDao;
+	}
+	
 
 	/**
 	 * 保存预约信息
@@ -44,7 +79,19 @@ public class ReserveAction {
 	@Action(value="save")
 	public String save() throws IOException{
 		
+		String resBId = ServletActionContext.getRequest().getParameter("resBId");
+		String resDId = ServletActionContext.getRequest().getParameter("resDId");
+		String resUId = ServletActionContext.getRequest().getParameter("resUId");
+		String resStarttime = ServletActionContext.getRequest().getParameter("resStarttime");
+		String resEndtime = ServletActionContext.getRequest().getParameter("resEndtime");
+		
+		
 		Reserve reserve = new Reserve();
+		reserve.setResBId(boardroomDao.getById(resBId));
+		reserve.setResDId(departmentDao.getById(resDId));
+		reserve.setResUId(usersDao.getById(resUId));
+		reserve.setResStarttime(resStarttime);
+		reserve.setResEndtime(resEndtime);
 		JSONObject jobj = new JSONObject();
 		if(reserveDao.save(reserve)) {
 			jobj.put("mes", "保存成功!");

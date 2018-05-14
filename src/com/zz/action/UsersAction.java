@@ -276,7 +276,8 @@ public class UsersAction {
 	public String login() throws IOException {
 		String uName = URLDecoder.decode(ServletActionContext.getRequest().getParameter("uName"), "utf-8");
 		String uPassword = ServletActionContext.getRequest().getParameter("uPwd");
-		String hql = "from Users where uName='" + uName + "' and uPassword='" + uPassword + "'";
+		String uRId = ServletActionContext.getRequest().getParameter("uRId");
+		String hql = "from Users where uName='" + uName + "' and uPassword='" + uPassword +"' and uRId='"+uRId+"'";
 		List<Object> usersTypelist = usersDao.getAllByConds(hql);// 获取所有类型数据，不带分页
 		JSONObject jobj = new JSONObject();
 		if (usersTypelist.size() > 0) {
