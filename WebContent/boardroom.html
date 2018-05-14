@@ -119,6 +119,18 @@
     			if(data.status == 'success'){
    					var rows = [];
        				rows = data.data;
+       				for(var i = 0 ; i < rows[i] ; i++){
+       				    if(rows[i].bEquipment == 0){
+                            rows[i].bEquipment = '有';
+                        }else{
+                            rows[i].bEquipment = '无';
+                        }
+                        if(rows[i].bSign == 0){
+                            rows[i].bSign = '停用';
+                        }else{
+                            rows[i].bSign = '可用';
+                        }
+                    }
        				$('#dg').datagrid('loadData', rows);
     			}else{
     				//没有数据或服务器错误
