@@ -44,8 +44,11 @@ public class RoleAction {
 	@Action(value="save")
 	public String save() throws IOException{
 		
+		String rName = ServletActionContext.getRequest().getParameter("rName");
 		Role role = new Role();
+		role.setrName(rName);
 		JSONObject jobj = new JSONObject();
+		
 		if(roleDao.save(role)) {
 			jobj.put("mes", "保存成功!");
 			jobj.put("status", "success");

@@ -1,6 +1,7 @@
 package com.zz.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +38,26 @@ public class BoardRoomAction {
 	
 
 	/**
-	 * 保存缺勤信息
+	 * 保存会议室信息
 	 * @return
 	 * @throws IOException 
 	 */
 	@Action(value="save")
 	public String save() throws IOException{
 		
+		String bName = ServletActionContext.getRequest().getParameter("bName");
+		String bNum = ServletActionContext.getRequest().getParameter("bNum");
+		String bAdd = ServletActionContext.getRequest().getParameter("bAdd");
+		String bEquipment = ServletActionContext.getRequest().getParameter("bEquipment");
+		
+		
 		BoardRoom boardroom = new BoardRoom();
+		
+		boardroom.setbName(bName);
+		boardroom.setbNum(Integer.parseInt(bNum));
+		boardroom.setbAdd(bAdd);
+		boardroom.setbEquipment(Integer.parseInt(bEquipment));
+		boardroom.setbSign(1);
 		JSONObject jobj = new JSONObject();
 		if(boardroomDao.save(boardroom)) {
 			jobj.put("mes", "保存成功!");
@@ -59,7 +72,7 @@ public class BoardRoomAction {
 		
 	}
 	/**
-	 * 删除缺勤信息
+	 * 删除会议室信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -82,8 +95,9 @@ public class BoardRoomAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	
 	/**
-	 * 修改缺勤信息
+	 * 修改会议室信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -91,7 +105,26 @@ public class BoardRoomAction {
 	public String update() throws IOException{
 		
 		String bId = ServletActionContext.getRequest().getParameter("bId");
+		String bName = ServletActionContext.getRequest().getParameter("bName");
+		String bNum = ServletActionContext.getRequest().getParameter("bNum");
+		String bAdd = ServletActionContext.getRequest().getParameter("bAdd");
+		String bEquipment = ServletActionContext.getRequest().getParameter("bEquipment");
 		BoardRoom boardroom = boardroomDao.getById(bId);
+		
+		if (bName != null && !"".equals(bName)) {
+			boardroom.setbName(bName);
+		}
+		if (bNum != null && !"".equals(bNum)) {
+			boardroom.setbNum(Integer.parseInt(bNum));
+		}
+		if (bAdd != null && !"".equals(bAdd)) {
+			boardroom.setbAdd(bAdd);
+		}
+		if (bEquipment != null && !"".equals(bEquipment)) {
+			boardroom.setbEquipment(Integer.parseInt(bEquipment));
+		}
+		
+		
 		JSONObject jobj = new JSONObject();
 		
 		if(boardroomDao.update(boardroom)) {
@@ -174,6 +207,55 @@ public class BoardRoomAction {
 	public String listAll() throws IOException{
 
 		List<Object> boardroomTypelist = boardroomDao.list();//获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if(boardroomTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(boardroomTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value="updateBySign")
+	public String updateBySign() throws IOException{
+		
+		String bId = ServletActionContext.getRequest().getParameter("bId");
+		BoardRoom boardroom = boardroomDao.getById(bId);
+		if(boardroom.getbSign() == 1){
+			boardroom.setbSign(0);
+		}
+		if(boardroom.getbSign() == 0){
+			boardroom.setbSign(1);
+		}
+		JSONObject jobj = new JSONObject();
+		
+		if(boardroomDao.update(boardroom)) {
+			jobj.put("mes", "更新成功!");
+			jobj.put("status", "success");
+			jobj.put("loginUser", boardroom);
+		}else{
+			//save failed
+			jobj.put("mes", "更新失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	
+	@Action(value="searchAll")
+	public String searchAll() throws IOException{
+		String bName = URLDecoder.decode(ServletActionContext.getRequest().getParameter("bName"), "utf-8");
+		String hql ="from BoardRoom where 1=1 and bName LIKE '%"+bName+"%' or bAdd LIKE '%"+bName+"%'";
+		List<Object> boardroomTypelist = boardroomDao.getAllByConds(hql);
 		JSONObject jobj = new JSONObject();
 		if(boardroomTypelist.size() > 0){
 			//save success

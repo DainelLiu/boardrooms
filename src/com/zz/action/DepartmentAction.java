@@ -1,6 +1,7 @@
 package com.zz.action;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,60 +22,72 @@ import net.sf.json.JSONObject;
 
 @Scope("prototype")
 @ParentPackage("struts-default")
-//表示继承的父包
+// 表示继承的父包
 @Namespace(value = "/department")
 public class DepartmentAction {
-	
+
 	private IDepartmentDao departmentDao;
-	
+
 	public IDepartmentDao getDepartmentDao() {
 		return departmentDao;
 	}
-	@Resource(name="DepartmentDao")
+
+	@Resource(name = "DepartmentDao")
 	public void setDepartmentDao(IDepartmentDao departmentDao) {
 		this.departmentDao = departmentDao;
 	}
-	
 
 	/**
-	 * 保存缺勤信息
+	 * 保存部门信息
+	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	@Action(value="save")
-	public String save() throws IOException{
-		
+	@Action(value = "save")
+	public String save() throws IOException {
+		String dName = ServletActionContext.getRequest().getParameter("dName");
+		String dDescribe = ServletActionContext.getRequest().getParameter("dDescribe");
+		String dNumber = ServletActionContext.getRequest().getParameter("dNumber");
 		Department department = new Department();
+		if (dNumber != null && !"".equals(dNumber)) {
+			department.setdNumber(Integer.parseInt(dNumber));
+		} else {
+			department.setdNumber(0);
+		}
+		department.setdDescribe(dDescribe);
+		department.setdName(dName);
+
 		JSONObject jobj = new JSONObject();
-		if(departmentDao.save(department)) {
+		if (departmentDao.save(department)) {
 			jobj.put("mes", "保存成功!");
 			jobj.put("status", "success");
-		}else {
+		} else {
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
 		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
-		
 	}
+
 	/**
-	 * 删除缺勤信息
+	 * 删除部门信息
+	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	@Action(value="delete")
-	public String delete() throws IOException{
-		
+	@Action(value = "delete")
+	public String delete() throws IOException {
+
 		String dId = ServletActionContext.getRequest().getParameter("dId");
 		Department department = departmentDao.getById(dId);
 		JSONObject jobj = new JSONObject();
-		if(departmentDao.delete(department)){
-			//save success
+		if (departmentDao.delete(department)) {
+			// save success
 			jobj.put("mes", "删除成功!");
 			jobj.put("status", "success");
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "删除失败!");
 			jobj.put("status", "error");
 		}
@@ -82,24 +95,38 @@ public class DepartmentAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+
 	/**
-	 * 修改缺勤信息
+	 * 修改部门信息
+	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	@Action(value="update")
-	public String update() throws IOException{
-		
+	@Action(value = "update")
+	public String update() throws IOException {
+
 		String dId = ServletActionContext.getRequest().getParameter("dId");
+		String dName = ServletActionContext.getRequest().getParameter("dName");
+		String dDescribe = ServletActionContext.getRequest().getParameter("dDescribe");
+		String dNumber = ServletActionContext.getRequest().getParameter("dNumber");
 		Department department = departmentDao.getById(dId);
+		if (dName != null && !"".equals(dName)) {
+			department.setdName(dName);
+		} 
+		if (dDescribe != null && !"".equals(dDescribe)) {
+			department.setdDescribe(dDescribe);
+		} 
+		if (dNumber != null && !"".equals(dNumber)) {
+			department.setdNumber(Integer.parseInt(dNumber));
+		} 
 		JSONObject jobj = new JSONObject();
-		
-		if(departmentDao.update(department)) {
+
+		if (departmentDao.update(department)) {
 			jobj.put("mes", "更新成功!");
 			jobj.put("status", "success");
 			jobj.put("loginUser", department);
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "更新失败!");
 			jobj.put("status", "error");
 		}
@@ -107,24 +134,25 @@ public class DepartmentAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
-	
+
 	/**
 	 * 根据id信息
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	@Action(value="getById")
-	public String getById() throws IOException{
+	@Action(value = "getById")
+	public String getById() throws IOException {
 		String dId = ServletActionContext.getRequest().getParameter("dId");
 		Department department = departmentDao.getById(dId);
 		JSONObject jobj = new JSONObject();
-		if(department != null){
-			//save success
+		if (department != null) {
+			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
-			jobj.put("data",department);
-		}else{
-			//save failed
+			jobj.put("data", department);
+		} else {
+			// save failed
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
@@ -132,36 +160,38 @@ public class DepartmentAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+
 	/**
 	 * 获取品牌(类型)列表
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	@Action(value="list")
-	public String list() throws IOException{
-		//分页
+	@Action(value = "list")
+	public String list() throws IOException {
+		// 分页
 		String pageNumStr = ServletActionContext.getRequest().getParameter("pageNum");
 		int pageNum = 1;
-		if(pageNumStr!=null && !"".equals(pageNumStr)){
+		if (pageNumStr != null && !"".equals(pageNumStr)) {
 			pageNum = Integer.parseInt(pageNumStr);
 		}
 		List<Object> list = new ArrayList<Object>();
-		List<Object> departmentTypelist = departmentDao.list();//获取所有类型数据，不带分页
-		PageBean page=null;
-		if(departmentTypelist.size()>0){
-			page = new PageBean(departmentTypelist.size(),pageNum,5);
-			list = departmentDao.listAll(page);//带分页
+		List<Object> departmentTypelist = departmentDao.list();// 获取所有类型数据，不带分页
+		PageBean page = null;
+		if (departmentTypelist.size() > 0) {
+			page = new PageBean(departmentTypelist.size(), pageNum, 5);
+			list = departmentDao.listAll(page);// 带分页
 		}
 		JSONObject jobj = new JSONObject();
-		if(departmentTypelist.size() > 0){
-			//save success
+		if (departmentTypelist.size() > 0) {
+			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(list));
 			jobj.put("pageTotal", page.getPageCount());
 			jobj.put("pageNum", page.getPageNum());
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
@@ -169,19 +199,19 @@ public class DepartmentAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
-	
-	@Action(value="listAll")
-	public String listAll() throws IOException{
 
-		List<Object> departmentTypelist = departmentDao.list();//获取所有类型数据，不带分页
+	@Action(value = "listAll")
+	public String listAll() throws IOException {
+
+		List<Object> departmentTypelist = departmentDao.list();// 获取所有类型数据，不带分页
 		JSONObject jobj = new JSONObject();
-		if(departmentTypelist.size() > 0){
-			//save success
+		if (departmentTypelist.size() > 0) {
+			// save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
 			jobj.put("data", JsonUtil.toJsonByListObj(departmentTypelist));
-		}else{
-			//save failed
+		} else {
+			// save failed
 			jobj.put("mes", "获取失败!");
 			jobj.put("status", "error");
 		}
@@ -190,5 +220,28 @@ public class DepartmentAction {
 		return null;
 	}
 	
+	@Action(value = "searchBydName")
+	public String searchBydName() throws IOException {
+		String dName = URLDecoder.decode(ServletActionContext.getRequest().getParameter("dName"), "utf-8");
+		String hql ="from Department where 1=1 and dName LIKE '%"+dName+"%'  or dDescribe LIKE '%" +dName+"%'";
+		List<Object> departmentTypelist = departmentDao.getAllByConds(hql);// 获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if (departmentTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(departmentTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 
+	
+	
+	
 }

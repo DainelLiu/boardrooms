@@ -1,7 +1,6 @@
 package com.zz.action;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,10 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
+import com.zz.dao.IDepartmentDao;
+import com.zz.dao.IRoleDao;
 import com.zz.dao.IUsersDao;
+import com.zz.model.Department;
 import com.zz.model.Users;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -37,6 +39,26 @@ public class UsersAction {
 		this.usersDao = usersDao;
 	}
 	
+private IDepartmentDao departmentDao;
+	
+	public IDepartmentDao getDepartmentDao() {
+		return departmentDao;
+	}
+	@Resource(name="DepartmentDao")
+	public void setDepartmentDao(IDepartmentDao departmentDao) {
+		this.departmentDao = departmentDao;
+	}
+	
+	private IRoleDao roleDao;
+	
+	public IRoleDao getRoleDao() {
+		return roleDao;
+	}
+	@Resource(name="RoleDao")
+	public void setRoleDao(IRoleDao roleDao) {
+		this.roleDao = roleDao;
+	}
+	
 
 	/**
 	 * 保存缺勤信息
@@ -46,9 +68,29 @@ public class UsersAction {
 	@Action(value="save")
 	public String save() throws IOException{
 		
+		String uName = ServletActionContext.getRequest().getParameter("uName");
+		String uPassword = ServletActionContext.getRequest().getParameter("uPassword");
+		String uRealName = ServletActionContext.getRequest().getParameter("uRealName");
+		String uBirth = ServletActionContext.getRequest().getParameter("uBirth");
+		String uInformation = ServletActionContext.getRequest().getParameter("uInformation");
+		String uDId = ServletActionContext.getRequest().getParameter("uDId");
+		String uRId = ServletActionContext.getRequest().getParameter("uRId");
+		
 		Users users = new Users();
+		Department department = new Department();
+		users.setuName(uName);
+		users.setuPassword(uPassword);
+		users.setuRealName(uRealName);
+		users.setuBirth(uBirth);
+		users.setuInformation(uInformation);
+		users.setuDId(departmentDao.getById(uDId));
+		users.setuRId(roleDao.getById(uRId));
+		
 		JSONObject jobj = new JSONObject();
 		if(usersDao.save(users)) {
+			int dNumber = (departmentDao.getById(uDId)).getdNumber();
+			department.setdNumber(dNumber+1);
+			departmentDao.update(department);
 			jobj.put("mes", "保存成功!");
 			jobj.put("status", "success");
 		}else {

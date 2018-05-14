@@ -22,7 +22,7 @@ public class Message implements Serializable{
 	 */
 	private static final long serialVersionUID = -7661203144178409828L;
 	/**
-	 * 课程表实体类
+	 * 留言实体类
 	 */
 	
 	//留言编号

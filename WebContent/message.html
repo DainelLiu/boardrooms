@@ -134,7 +134,7 @@
 				// });
 				//alert(ids);return;
 				$.ajax({
-					url:'./curriculum/delete.action',
+					url:'./message/delete.action',
 					data:{
 					    currId:item.currId
                     },
@@ -185,9 +185,9 @@
 		var item = $('#classes-datagrid-2').datagrid('getSelected');
 		//alert(item.productid);return;
 		$.ajax({
-			url:'./curriculum/getById.action',
+			url:'./message/getById.action',
 			data:{
-                currId:item.currId
+				mId:item.mId
             },
 			success:function(data){
                 data = JSON.parse(data);
