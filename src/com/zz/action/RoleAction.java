@@ -37,7 +37,7 @@ public class RoleAction {
 	
 
 	/**
-	 * 保存缺勤信息
+	 * 保存角色信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -62,7 +62,7 @@ public class RoleAction {
 		
 	}
 	/**
-	 * 删除缺勤信息
+	 * 删除角色信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -86,7 +86,7 @@ public class RoleAction {
 		return null;
 	}
 	/**
-	 * 修改缺勤信息
+	 * 修改角色信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -94,7 +94,11 @@ public class RoleAction {
 	public String update() throws IOException{
 		
 		String rId = ServletActionContext.getRequest().getParameter("rId");
+		String rName = ServletActionContext.getRequest().getParameter("rName");
 		Role role = roleDao.getById(rId);
+		if (rName != null && !"".equals(rName)) {
+			role.setrName(rName);
+		} 
 		JSONObject jobj = new JSONObject();
 		
 		if(roleDao.update(role)) {

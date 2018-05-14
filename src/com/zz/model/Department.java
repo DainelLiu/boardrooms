@@ -25,7 +25,7 @@ public class Department implements Serializable{
 	private String dId;
 	//部门名称
 	private String dName;
-	//部门描述胡
+	//部门描述
 	private String dDescribe;
 	//部门人数
 	private int dNumber;

@@ -37,7 +37,7 @@ public class ReserveAction {
 	
 
 	/**
-	 * 保存缺勤信息
+	 * 保存预约信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -59,7 +59,7 @@ public class ReserveAction {
 		
 	}
 	/**
-	 * 删除缺勤信息
+	 * 删除预约信息
 	 * @return
 	 * @throws IOException 
 	 */
@@ -83,7 +83,7 @@ public class ReserveAction {
 		return null;
 	}
 	/**
-	 * 修改缺勤信息
+	 * 修改预约信息
 	 * @return
 	 * @throws IOException 
 	 */

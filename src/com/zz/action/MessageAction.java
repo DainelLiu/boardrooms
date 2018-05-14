@@ -242,4 +242,26 @@ public class MessageAction {
 		return null;
 	}
 
+	
+	@Action(value = "listAllByUsers")
+	public String listAllByUsers() throws IOException {
+		
+		String uId = ServletActionContext.getRequest().getParameter("uId");
+		String hql="message where 1=1 and mUId ='"+uId+"'";
+		List<Object> messageTypelist = messageDao.getAllByConds(hql);
+		JSONObject jobj = new JSONObject();
+		if (messageTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(messageTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 }
