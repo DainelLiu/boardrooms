@@ -119,7 +119,7 @@
     			if(data.status == 'success'){
    					var rows = [];
        				rows = data.data;
-       				for(var i = 0 ; i < rows[i] ; i++){
+       				for(var i = 0 ; i < rows[i].length ; i++){
        				    if(rows[i].bEquipment == 0){
                             rows[i].bEquipment = '有';
                         }else{
