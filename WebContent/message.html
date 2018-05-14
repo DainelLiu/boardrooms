@@ -117,6 +117,10 @@
     			if(data.status == 'success'){
    					var rows = [];
        				rows = data.data;
+                    for(var i = 0 ; i < rows.length ; i++){
+                        rows[i].mUId = rows[i].mUId.uName;
+                        rows[i].mBId = rows[i].mBId.bName;
+                    }
        				$('#dg').datagrid('loadData', rows);
     			}else{
     				//没有数据或服务器错误
