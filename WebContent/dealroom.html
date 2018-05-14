@@ -456,8 +456,8 @@
             url:"./boardroom/searchByTime.action",
             dataType:"json",
             data:{
-                resStarttime:$('#starttime').val(),
-                resEndtime:$('#endtime').val()
+                resStarttime:$('#starttime').datetimebox('getValue'),
+                resEndtime:$('#endtime').datetimebox('getValue')
             },
             success:function(data){
                 console.log(data);
