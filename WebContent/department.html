@@ -1,256 +1,115 @@
-<div class="easyui-layout" data-options="fit:true">
-    <!-- Begin of toolbar -->
-    <div id="depart-toolbar-2">
-        <div class="wu-toolbar-button">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd1()" plain="true">添加</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit1()" plain="true">修改</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="remove1()" plain="true">删除</a>
-        </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>会议室管理系统</title>
+    <link rel="stylesheet" href="lib/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="lib/uimaker/icon.css">
+
+</head>
+<body>
+<div class="container">
+
+    <table id="dg"></table>
+
+    <div id="tb" style="height:auto">
+        <a href="javascript:void(0)" id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
+           onclick="addRemark()">新增</a>
+        <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
+           onclick="removeit()">删除</a>
+        <a href="javascript:void(0)" id="saveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:false"
+           onclick="acceptRow()">保存</a>
+        <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:false"
+           onclick="cancelrow()">撤回</a>
     </div>
-    <div class="wu-toolbar-search">
-        <label>关键词：</label><input class="wu-text" style="width:100px" id="searchWord">
-        <a href="javascript:searchDepart()" class="easyui-linkbutton" iconCls="icon-search">开始检索</a>
-        <a href="javascript:getData()" class="easyui-linkbutton" iconCls="icon-redo">重置</a>
-    </div>
-    <!-- End of toolbar -->
-    <table id="depart-datagrid-2" class="easyui-datagrid" toolbar="#depart-toolbar-2"></table>
 </div>
-<!-- Begin of easyui-dialog -->
-<div id="depart-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
-	<form id="depart-form-2" method="post" action="department/save.action">
-        <table>
-            <tr>
-                <td width="60" align="right">部门名称:</td>
-                <td><input type="text" name="dName" class="wu-text" /></td>
-            </tr>
-            <tr>
-                <td width="60" align="right">部门描述:</td>
-                <td><input type="text" name="dDescribe" class="wu-text" /></td>
-            </tr>
-            <tr>
-                <td width="60" align="right">部门人数:</td>
-                <td><input type="text" name="dNumber" class="wu-text" /></td>
-            </tr>
-        </table>
-    </form>
-</div>
-<div id="depart-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
-    <form id="depart-form-3" method="post" action="department/update.action">
-	    <table>
-	    	<tr>
-	            <td width="80" align="right">部门编号:</td>
-	            <td><input type="text" name="dId" id="dId" class="wu-text" readonly/></td>
-	        </tr>
-	        <tr>
-	            <td width="80" align="right">部门名称:</td>
-	            <td><input type="text" name="dName" id="dName" class="wu-text" /></td>
-	        </tr>
-            <tr>
-                <td width="80" align="right">部门描述:</td>
-                <td><input type="text" name="dDescribe" id="dDescribe" class="wu-text" /></td>
-            </tr>
-            <tr>
-                <td width="80" align="right">部门人数:</td>
-                <td><input type="text" name="dNumber" id="dNumber" class="wu-text" /></td>
-            </tr>
-	    </table>
-    </form>
-</div>
-<!-- End of easyui-dialog -->
+
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="lib/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="lib/datagrid-detailview.js"></script>
+<script type="text/javascript" src="lib/custom/pageFilter.js"></script>
 <script type="text/javascript">
     $(function(){
-        /**
-         * Name 载入数据
-         */
-        $('#depart-datagrid-2').datagrid({
-            loadFilter:pagerFilter,
-            rownumbers:true,
+        $('#dg').datagrid({
+            title:'部门列表',
+            width:'auto',
+            height:600,
+            rownumbers:false,
             singleSelect:true,
-            pageSize:10,
+            autoRowHeight:false,
             pagination:true,
-            multiSort:true,
             fitColumns:true,
-            height:485,
+            striped:true,
+            checkOnSelect:true,
+            selectOnCheck:true,
+            collapsible:false,
+            toolbar:'#tb',
+            pageSize:10,
+            /* data:getData(), */
             columns:[[
-                { checkbox:true},
-                { field:'dId',title:'部门编号',width:180,sortable:true},
-                { field:'dName',title:'部门名称',width:180},
-                { field:'dDescribe',title:'部门描述',width:180},
-                { field:'dNumber',title:'部门人数',width:180},
-            ]]
-        });
-    })
-
-	/**
-	* Name 添加记录
-	*/
-	function add(){
-		$('#depart-form-2').form('submit', {
-			url:'',
-			success:function(data){
-				data = JSON.parse(data);
-				if(data.status == 'success'){
-					$.messager.alert('信息提示','提交成功！','info');
-					$('#depart-dialog-2').dialog('close');
-					getData();
-				}
-				else
-				{
-					$.messager.alert('信息提示','提交失败！','info');
-				}
-			}
-		});
-	}
-
-	/**
-	* Name 修改记录
-	*/
-	function edit(){
-		$('#depart-form-3').form('submit', {
-			url:'',
-			success:function(data){
-				data = JSON.parse(data);
-				if(data.status == 'success'){
-					$.messager.alert('信息提示','提交成功！','info');
-					$('#depart-dialog-3').dialog('close');
-					getData();
-				}
-				else
-				{
-					$.messager.alert('信息提示','提交失败！','info');
-				}
-			}
-		});
-	}
-
-	/**
-	* Name 删除记录
-	*/
-	function remove1(){
-		$.messager.confirm('信息提示','确定要删除该记录？', function(result){
-			if(result){
-				var item = $('#depart-datagrid-2').datagrid('getSelected');
-				//var items = $('#depart-datagrid-2').datagrid('getSelections');
-				/* var ids = [];
-				$(items).each(function(){
-					ids.push(this.collId);
-				}); */
-				//alert(ids);return;
-				$.ajax({
-					url:'./department/delete.action',
-					data:{
-                        dId:item.dId
-					},
-					success:function(data){
-						data = JSON.parse(data);
-						if(data.status == 'success'){
-							$.messager.alert('信息提示','删除成功！','info');
-							getData();
-						}
-						else
-						{
-							$.messager.alert('信息提示','删除失败！','info');
-						}
-					}
-				});
-			}
-		});
-	}
-
-	/**
-	* Name 打开添加窗口
-	*/
-	function openAdd1(){
-		$('#depart-form-2').form('clear');
-		$('#depart-dialog-2').dialog({
-			closed: false,
-			modal:true,
-            title: "添加信息",
-            buttons: [{
-                text: '确定',
-                iconCls: 'icon-ok',
-                handler: add
-            }, {
-                text: '取消',
-                iconCls: 'icon-cancel',
-                handler: function () {
-                    $('#depart-dialog-2').dialog('close');
+                {field:'ck',checkbox:true,width:'5%'},
+                {field:'dId',title:'部门编号',width:'25%',align:'center',sortable:true},
+                {field:'dName',title:'部门名称',width:'30%',align:'center',editor:'text'},
+                {field:'dDescribe',title:'部门描述',width:'30%',align:'center',editor:'text'},
+                {field:'dNumber',title:'部门人数',width:'10%',align:'center',editor:'text'},
+            ]],
+            onDblClickRow: onClickCell,
+            onClickRow:function(rowIndex, rowData){
+                var indexs = $(this).datagrid('getEditingRowIndexs');
+                if(indexs.length > 0){
+                    $.each(indexs,function(index,item){
+                        $('#dg').datagrid('rejectChanges', item);
+                        $('#dg').datagrid("endEdit", item);
+                    });
                 }
-            }]
-        });
-	}
-
-	/**
-	* Name 打开修改窗口
-	*/
-	function openEdit1(){
-		//$('#depart-form-2').form('clear');
-		var item = $('#depart-datagrid-2').datagrid('getSelected');
-		//alert(item.productid);return;
-		$.ajax({
-			url:'./department/getById.action',
-			data:{
-				dId:item.dId
-			},
-			success:function(data){
-				data = JSON.parse(data);
-				if(data.status == 'success'){
-					$('#dId').val(data.data.dId);
-					$('#dName').val(data.data.dName);
-                    $('#dDescribe').val(data.data.dDescribe);
-                    $('#dNumber').val(data.data.dNumber);
-					$('#depart-dialog-3').dialog({
-						closed: false,
-						modal:true,
-			            title: "修改信息",
-			            buttons: [{
-			                text: '确定',
-			                iconCls: 'icon-ok',
-			                handler: edit
-			            }, {
-			                text: '取消',
-			                iconCls: 'icon-cancel',
-			                handler: function () {
-			                    $('#depart-dialog-3').dialog('close');
-			                }
-			            }]
-			        });
-				}
-				else{
-					
-				}
-			}
-		});
-	}
-	function searchDepart(){
-		$.ajax({
-    		type:"get",
-    		async:true,
-    		url:"./department/searchBydName.action",
-    		dataType:"json",
-    		data:{
-                dName:encodeURI($('#searchWord').val())
-    		},
-    		success:function(data){
-    			console.log(data);
-    			if(data.status == 'success'){
-   					var rows = [];
-       				rows = data.data;
-       				$('#depart-datagrid-2').datagrid('loadData', rows);
-    			}else{
-    				//没有数据或服务器错误
-                    $.messager.alert('信息提示','暂无数据！','info');
-    			}
-    		}
-    	});
-	}
-
-	function getData(){
+//                $('#addBtn').linkbutton('disable');
+//                $('#delBtn').linkbutton('enable');
+//                $('#saveBtn').linkbutton('enable');
+//                $('#rejectBtn').linkbutton('enable');
+            },
+           /* onClickCell: function(index,field,value){
+                $(this).datagrid('beginEdit', index);
+                var ed = $(this).datagrid('getEditor', {index:index,field:field});
+            },*/
+            onBeforeEdit:function(index,row){
+                /*//修改时要获取选择到的行
+                var rows = row;
+                //如果只选择了一行则可以进行修改，否则不操作
+                if (rows.length == 1) {
+                    //修改之前先关闭已经开启的编辑行，当调用endEdit该方法时会触发onAfterEdit事件
+                    if (index != undefined) {
+                        $('#dg').datagrid("endEdit", index);
+                    }
+                    //当无编辑行时
+                    if (index == undefined) {
+                        //获取到当前选择行的下标
+                        var index = $('#dg').datagrid("getRowIndex", rows[0]);
+                        //开启编辑
+                        $('#dg').datagrid("beginEdit", index);
+                        //把当前开启编辑的行赋值给全局变量editRow
+                        //应该取消当前列表的所有选择行，要不然双击之后无法再选择其他行进行编辑
+                        $('#dg').datagrid("unselectAll");
+                    }
+                }*/
+            },
+            onAfterEdit:function(index,row){
+            },
+            onCancelEdit:function(index,row){
+            },
+            onLoadSuccess:function(){
+//                $('#delBtn').linkbutton('disable');
+//                $('#saveBtn').linkbutton('disable');
+//                $('#rejectBtn').linkbutton('disable');
+            }
+        }).datagrid('clientPaging');
+    });
+    function getData(){
     	//获取用户列表
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./department/listAll.action",
+    		url:"./department/list.action",
     		dataType:"json",
     		data:{},
     		success:function(data){
@@ -258,44 +117,187 @@
     			if(data.status == 'success'){
    					var rows = [];
        				rows = data.data;
-       				$('#depart-datagrid-2').datagrid('loadData', rows);
+       				$('#dg').datagrid('loadData', rows);
     			}else{
     				//没有数据或服务器错误
-                    $.messager.alert('信息提示','暂无数据！','info');
     			}
     		}
     	});
     }
-	getData();
-	
-	/**
-	* Name 分页过滤器
-	*/
-	function pagerFilter(data){
-		if (typeof data.length == 'number' && typeof data.splice == 'function'){// is array                
-			data = {                   
-				total: data.length,                   
-				rows: data               
-			}            
-		}        
-		var dg = $(this);         
-		var opts = dg.datagrid('options');          
-		var pager = dg.datagrid('getPager');          
-		pager.pagination({                
-			onSelectPage:function(pageNum, pageSize){                 
-				opts.pageNumber = pageNum;                   
-				opts.pageSize = pageSize;                
-				pager.pagination('refresh',{pageNumber:pageNum,pageSize:pageSize});                  
-				dg.datagrid('loadData',data);                
-			}          
-		});           
-		if (!data.originalRows){               
-			data.originalRows = (data.rows);       
-		}         
-		var start = (opts.pageNumber-1)*parseInt(opts.pageSize);          
-		var end = start + parseInt(opts.pageSize);        
-		data.rows = (data.originalRows.slice(start, end));         
-		return data;       
-	}
-	
+    getData();
+    $.extend($.fn.datagrid.methods, {
+        getEditingRowIndexs: function(jq) {
+            var rows = $.data(jq[0], "datagrid").panel.find('.datagrid-row-editing');
+            var indexs = [];
+            rows.each(function(i, row) {
+                var index = row.sectionRowIndex;
+                if (indexs.indexOf(index) == -1) {
+                    indexs.push(index);
+                }
+            });
+            return indexs;
+        }
+    });
+    //可编辑行
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if ($('#dg').datagrid('validateRow', editIndex)){
+            $('#dg').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+//            $('#addBtn').linkbutton('enable');
+//            $('#delBtn').linkbutton('disable');
+//            $('#saveBtn').linkbutton('disable');
+//            $('#rejectBtn').linkbutton('disable');
+            return true;
+        } else {
+//            $('#addBtn').linkbutton('disable');
+//            $('#delBtn').linkbutton('enable');
+//            $('#saveBtn').linkbutton('enable');
+//            $('#rejectBtn').linkbutton('enable');
+            return false;
+        }
+    }
+    //修改的方式是直接点击单元格，所以table要加上onClickCell属性，然后重写onClickCell方法
+    function onClickCell(index, field){
+        console.log(index);
+        console.log(field);
+
+        if (editIndex != index){
+            if (endEditing()){
+                $('#dg').datagrid('selectRow', index)
+                    .datagrid('beginEdit', index);
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'bDescribe'});
+                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                editIndex = index;
+            } else {
+                $('#dg').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+    // 添加
+    function addRemark(){
+//        $('#addBtn').linkbutton('disable');
+//        $('#delBtn').linkbutton('enable');
+//        $('#saveBtn').linkbutton('enable');
+//        $('#rejectBtn').linkbutton('enable');
+        if (endEditing()){
+            editIndex = 0;
+//            $('#dg').datagrid('insertRow',{'pid':'pid-'});
+            $('#dg').datagrid('insertRow',{
+                index: editIndex,  // 索引从0开始
+                row: {'ck': true}
+            });
+//            editIndex = $('#dg').datagrid('getRows').length-1;
+            $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+        }
+    }
+    // 删除
+    function removeit(){
+        $.messager.defaults = {ok: '确定', cancel: '取消', width: '200px'};
+        var row = $('#dg').datagrid('getSelected');
+        if(row){
+            $.messager.confirm('操作提示','确认删除?',function(r){
+                if (r){
+                    var rindex = $('#dg').datagrid('getRowIndex', row);
+                    //alert(rindex);
+                    $('#dg').datagrid('deleteRow', rindex);
+                    $.ajax({
+            			type:"post",
+            			async:true,
+            			url:"./department/delete.action",
+            			dataType:"json",
+            			data:{
+            				dId:row.dId
+            			},
+            			success:function(data){
+            				if(data.status == 'success'){
+            					getData();
+            				}else{
+            					alert(data.mes);
+            				}
+            			}
+            		});
+                }else{
+                    $('#dg').datagrid('clearSelections');
+                }
+            });
+        }else{
+            $.messager.alert("操作提示", "请至少选中一行!","error",function () {});
+        }
+//        $('#addBtn').linkbutton('enable');
+//        $('#delBtn').linkbutton('disable');
+//        $('#saveBtn').linkbutton('disable');
+//        $('#rejectBtn').linkbutton('disable');
+    }
+    // 保存方法（添加修改用了一个方法accept()）
+    function acceptRow(){
+        //成功之后
+//        $('#addBtn').linkbutton('enable');
+//        $('#delBtn').linkbutton('disable');
+//        $('#saveBtn').linkbutton('disable');
+//        $('#rejectBtn').linkbutton('disable');
+        if (endEditing()) {
+            var row = $('#dg').datagrid('getSelected');
+            console.log(row);
+            //发ajax请求后台
+          //发ajax请求后台
+            if(row.bId == '' || row.bId == null){
+            	$.ajax({
+        			type:"post",
+        			async:true,
+        			url:"./department/save.action",
+        			dataType:"json",
+        			data:{
+        				dName:row.dName,
+        				dDescribe:row.dDescribe,
+        				dNumber:row.dNumber
+        			},
+        			success:function(data){
+        				if(data.status == 'success'){
+        					getData();
+        				}else{
+        					alert(data.mes);
+        				}
+        			}
+        		});
+            }else{
+            	$.ajax({
+        			type:"post",
+        			async:true,
+        			url:"./brand/update.action",
+        			dataType:"json",
+        			data:{
+        				bId:row.bId,
+       					bDescribe:row.bDescribe
+        			},
+        			success:function(data){
+        				if(data.status == 'success'){
+        					getData();
+        				}else{
+        					alert(data.mes);
+        				}
+        			}
+        		});
+            }
+        }
+    }
+    //取消编辑
+    function cancelrow(){
+//        $('#addBtn').linkbutton('enable');
+//        $('#delBtn').linkbutton('disable');
+//        $('#saveBtn').linkbutton('disable');
+//        $('#rejectBtn').linkbutton('disable');
+        if(endEditing()){
+            var row = $('#dg').datagrid('getSelected');
+            var rindex = $('#dg').datagrid('getRowIndex', row);
+            $('#dg').datagrid('rejectChanges', rindex);
+            getData();
+        }
+    }
+
 </script>
+</body>
+</html>

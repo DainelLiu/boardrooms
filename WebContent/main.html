@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>会议室管理系统</title>
+    <link href="css/base.css" rel="stylesheet">
+    <link href="css/platform.css" rel="stylesheet">
+    <link rel="stylesheet" href="lib/uimaker/easyui.css">
+</head>
+<body>
+<div class="container">
+    <div id="pf-hd" style="background-color: #4fb259;">
+        <div class="pf-logo" style="border: none !important;">
+            <img src="images/main/main_logo.png" alt="logo">
+        </div>
+
+        <div class="pf-nav-wrap">
+            <div class="pf-nav-ww">
+                <!-- <ul class="pf-nav">
+                   <li class="pf-nav-item home current" data-menu="sys-manage">
+                       <a href="javascript:;">
+                           <span class="iconfont">&#xe63f;</span>
+                           <span class="pf-nav-title">商品管理</span>
+                       </a>
+                   </li>
+                   <li class="pf-nav-item project" data-menu="org-manage">
+                       <a href="javascript:;">
+                           <span class="iconfont">&#xe60d;</span>
+                           <span class="pf-nav-title">快递管理</span>
+                       </a>
+                   </li>
+                 </ul>-->
+            </div>
+            <!--翻页按钮-->
+            <!--<a href="javascript:;" class="pf-nav-prev disabled iconfont">&#xe606;</a>
+            <a href="javascript:;" class="pf-nav-next iconfont">&#xe607;</a>-->
+        </div>
+
+
+        <div class="pf-user">
+            <div class="pf-user-photo">
+                <img src="images/main/user.png" alt="">
+            </div>
+            <h4 class="pf-user-name ellipsis" id="username"></h4>
+            <i class="iconfont xiala">&#xe607;</i>
+
+            <div class="pf-user-panel">
+                <ul class="pf-user-opt">
+                    <li class="pf-modify-pwd">
+                        <a href="http://www.uimaker.com">
+                            <i class="iconfont">&#xe634;</i>
+                            <span class="pf-opt-name">修改密码</span>
+                        </a>
+                    </li>
+                    <li class="pf-logout">
+                        <a href="javascript:adminLoginOut()">
+                            <i class="iconfont">&#xe60e;</i>
+                            <span class="pf-opt-name">退出</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="pf-bd">
+        <div id="pf-sider">
+            <h2 class="pf-model-name">
+                <span class="iconfont">&#xe64a;</span>
+                <span class="pf-name">系统管理</span>
+                <span class="toggle-icon"></span>
+            </h2>
+
+            <ul class="sider-nav">
+                <li class="firstMenu">
+                     <a href="javascript:void(0);" onclick="toPage('部门管理','department.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe61d;</span>
+                        <span class="sider-nav-title">部门列表</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+                <li class="firstMenu">
+                    <a href="javascript:void(0);" onclick="toPage('会议室管理','boardroom.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe61d;</span>
+                        <span class="sider-nav-title">会议室列表</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+                <li class="firstMenu">
+                    <a href="javascript:void(0);" onclick="toPage('留言板管理','message.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">查看留言板</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+                 <li class="firstMenu">
+                    <a href="javascript:void(0);" onclick="toPage('会议室预定','message.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">预定情况</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+                 <li class="firstMenu">
+                    <a href="javascript:void(0);" onclick="toPage('角色管理','role.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">角色列表</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+                 <li class="firstMenu">
+                    <a href="javascript:void(0);" onclick="toPage('信息统计','message.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">会议室预定统计</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="pf-page">
+            <div id="tabs" class="easyui-tabs1" style="width:100%;height:100%;">
+                <div title="首页" style="padding:10px 5px 5px 10px;">
+                    <iframe class="page-iframe" src="welcome.html" frameborder="no" border="no" height="100%" width="100%"
+                            scrolling="auto"></iframe>
+                </div>
+                <!--<div title="商品审核" data-options="closable:true" style="padding:10px 5px 5px 10px;">
+                    <iframe class="page-iframe" src="index.html" frameborder="no" border="no" height="100%" width="100%"
+                            scrolling="auto"></iframe>
+                </div>-->
+            </div>
+        </div>
+    </div>
+
+    <div id="pf-ft">
+        <div class="system-name">
+            <i class="iconfont">&#xe6fe;</i>
+            <span>后台信息管理系统&nbsp;v1.0</span>
+        </div>
+        <div class="copyright-name">
+            <span>by 张震</span>
+            <i class="iconfont">&#xe6ff;</i>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/jquery.easyui.min.js"></script>
+<!-- <script type="text/javascript" src="js/menu.js"></script> -->
+<script type="text/javascript" src="lib/custom/util.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<!--[if IE 7]>
+<script type="text/javascript">
+    $(window).resize(function () {
+        $('#pf-bd').height($(window).height() - 76);
+    }).resize();
+
+</script>
+<![endif]-->
+
+
+<script type="text/javascript">
+	$(function(){
+		var loginUser = JSON.parse(Util.getSession("adminloginUser"));
+		if(loginUser == null || loginUser == ''){
+			alert('请先登录!');
+			window.location.href = 'login.html';
+		}else{
+			$('#username').text(loginUser.username);
+		}
+	})
+    $('.easyui-tabs1').tabs({
+        tabHeight: 44,
+        onSelect: function (title, index) {
+            if(index > 0){
+                $('.sider-nav li').removeClass('current');
+                $('.sider-nav-s li').removeClass('active');
+                $('.sider-nav-s').find('li').each(function(){
+                    if($(this).find('a').text() == title){
+                        $(this).addClass('active');
+                        $(this).parents('.firstMenu').addClass('current');
+                    }
+                });
+            }
+            var currentTab = $('.easyui-tabs1').tabs("getSelected");
+            if (currentTab.find("iframe") && currentTab.find("iframe").size()) {
+                currentTab.find("iframe").attr("src", currentTab.find("iframe").attr("src"));
+            }
+        },
+        onClose: function(title, index){
+            if(index > 0){
+                $('.sider-nav-s').find('li').each(function(){
+                    if($(this).find('a').text() == title){
+                        $(this).removeClass('active');
+                    }
+                });
+            }
+
+        }
+    });
+    /*$(window).resize(function () {
+        $('.tabs-panels').height($("#pf-page").height() - 46);
+        $('.panel-body').height($("#pf-page").height() - 76)
+    }).resize();
+
+    var page = 0,
+        pages = ($('.pf-nav').height() / 70) - 1;
+
+    if (pages === 0) {
+        $('.pf-nav-prev,.pf-nav-next').hide();
+    }
+    $(document).on('click', '.pf-nav-prev,.pf-nav-next', function () {
+
+
+        if ($(this).hasClass('disabled')) return;
+        if ($(this).hasClass('pf-nav-next')) {
+            page++;
+            $('.pf-nav').stop().animate({'margin-top': -70 * page}, 200);
+            if (page == pages) {
+                $(this).addClass('disabled');
+                $('.pf-nav-prev').removeClass('disabled');
+            } else {
+                $('.pf-nav-prev').removeClass('disabled');
+            }
+
+        } else {
+            page--;
+            $('.pf-nav').stop().animate({'margin-top': -70 * page}, 200);
+            if (page == 0) {
+                $(this).addClass('disabled');
+                $('.pf-nav-next').removeClass('disabled');
+            } else {
+                $('.pf-nav-next').removeClass('disabled');
+            }
+
+        }
+    })*/
+
+    // setTimeout(function(){
+    //    $('.tabs-panels').height($("#pf-page").height()-46);
+    //    $('.panel-body').height($("#pf-page").height()-76)
+    // }, 200)
+    function toPage(title, url,thisObj){
+        $('.sider-nav-s li').removeClass('active');
+        $(thisObj).parent('li').addClass('active');
+
+        if ($('#tabs').tabs('exists', title)){
+            $('#tabs').tabs('select', title);
+        } else {
+            var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+            $('#tabs').tabs('add',{
+                title:title,
+                content:content,
+                closable:true
+            });
+        }
+//        $('#tabs').tabs('select', $(page).text());
+    }
+    function adminLoginOut(){
+    	$.ajax({
+    		type:"post",
+    		async:false,
+    		url:"../login/logout.action",
+    		dataType:"json",
+    		data:{},
+    		success:function(data){
+    			console.log(data);
+    			if(data.status == 'success'){
+   					Util.clearLocalStorage();
+   					window.location.href = 'login.html';
+    			}else{
+    				//没有数据或服务器错误
+    			}
+    		}
+    	});
+    }
+</script>
+</body>
+</html>

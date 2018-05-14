@@ -1,170 +1,366 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="copyright" content="All Rights Reserved, Copyright (C) 2013, Wuyeguo, Ltd." />
-<title>EasyUI Web Admin Power by Wuyeguo</title>
-<link rel="stylesheet" type="text/css" href="easyui/1.3.4/themes/metro/easyui.css" />
-<link rel="stylesheet" type="text/css" href="css/wu.css" />
-<link rel="stylesheet" type="text/css" href="css/icon.css" />
-<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
-<script type="text/javascript" src="easyui/1.3.4/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="easyui/1.3.4/locale/easyui-lang-zh_CN.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoodsList</title>
+
+<link href="css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="lib/uimaker/easyui.css">
+<link rel="stylesheet" type="text/css" href="lib/uimaker/icon.css">
+<link rel="stylesheet" href="css/providers.css">
 </head>
-<body class="easyui-layout">
-	<!-- begin of header -->
-	<div class="wu-header" data-options="region:'north',border:false,split:true">
-    	<div class="wu-header-left">
-        	<h1>会议室管理系统</h1>
-        </div>
-        <div class="wu-header-right">
-        	<p><strong class="easyui-tooltip" title="">admin</strong>，欢迎您！</p>
-            <p><a href="#">安全退出</a></p>
-        </div>
-    </div>
-    <!-- end of header -->
-    <!-- begin of sidebar -->
-	<div class="wu-sidebar" data-options="region:'west',split:true,border:true,title:'导航菜单'"> 
-    	<div class="easyui-accordion" data-options="border:false,fit:true"> 
-        	<div title="部门管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">
-    			<ul class="easyui-tree wu-side-tree">
-                	<li iconCls="icon-chart-organisation"><a href="javascript:void(0)" data-icon="icon-chart-organisation" data-link="department.html" iframe="0">部门列表</a></li>
-                </ul>
-            </div>
-            <div title="会议室管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">
-    			<ul class="easyui-tree wu-side-tree">
-                	<li iconCls="icon-chart-organisation"><a href="javascript:void(0)" data-icon="icon-chart-organisation" data-link="rooms.html" iframe="0">会议室列表</a></li>
-                </ul>
-            </div>
-            <div title="留言板管理" data-options="iconCls:'icon-creditcards'" style="padding:5px;">
-    			<ul class="easyui-tree wu-side-tree">
-                    <li iconCls="icon-book"><a href="javascript:void(0)" data-icon="icon-book" data-link="message.html" iframe="0">查看留言板</a></li>
-                </ul>
-            </div>
-            <div title="会议室预定" data-options="iconCls:'icon-cart'" style="padding:5px;">
-    			<ul class="easyui-tree wu-side-tree">
-                    <li iconCls="icon-cog"><a href="javascript:void(0)" data-icon="icon-cog" data-link="temp/layout-3.html" iframe="0">预定情况</a></li>
-                </ul>
-            </div>
-            <div title="角色管理" data-options="iconCls:'icon-bricks'" style="padding:5px;">
-    			<ul class="easyui-tree wu-side-tree">
-                    <li iconCls="icon-user-group"><a href="javascript:void(0)" data-icon="icon-user-group" data-link="temp/layout-3.html" iframe="0">角色列表</a></li>
-                </ul>
-            </div>
-            <div title="用户管理" data-options="iconCls:'icon-chart-curve'" style="padding:5px;">
-    			<ul class="easyui-tree wu-side-tree">
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="temp/layout-3.html" iframe="0">用户列表</a></li>
-                </ul>
-            </div>
-            <div title="信息统计" data-options="iconCls:'icon-clipboard'" style="padding:5px;">
-                <ul class="easyui-tree wu-side-tree">
-                    <li iconCls="icon-clipboard"><a href="javascript:void(0)" data-icon="icon-users" data-link="temp/layout-3.html" iframe="0">会议室预定统计</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>	
-    <!-- end of sidebar -->    
-    <!-- begin of main -->
-    <div class="wu-main" data-options="region:'center'">
-        <div id="wu-tabs" class="easyui-tabs" data-options="border:false,fit:true">  
-            <div title="首页" data-options="href:'welcome.html',closable:false,iconCls:'icon-tip',cls:'pd3'"></div>
-        </div>
-    </div>
-    <!-- end of main --> 
-    <!-- begin of footer -->
-	<div class="wu-footer" data-options="region:'south',border:true,split:true">
-    	&copy; 2013 Wu All Rights Reserved
-    </div>
-    <!-- end of footer -->  
-    <script type="text/javascript">
-		$(function(){
-			$('.wu-side-tree a').bind("click",function(){
-				var title = $(this).text();
-				var url = $(this).attr('data-link');
-				var iconCls = $(this).attr('data-icon');
-				var iframe = $(this).attr('iframe')==1?true:false;
-				addTab(title,url,iconCls,iframe);
-			});	
-		})
-		
-		/**
-		* Name 载入树形菜单 
-		*/
-		$('#wu-side-tree').tree({
-			url:'temp/menu.php',
-			cache:false,
-			onClick:function(node){
-				var url = node.attributes['url'];
-				if(url==null || url == ""){
-					return false;
+<body>
+	<div class="container">
+		<!-- 查询结果显示 -->
+		<table id="tt"></table>
+		<div id="tb" style="padding: 0 30px;">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				data-options="iconCls:'icon-add'" onclick="appendFunc()">通过</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton"
+				data-options="iconCls:'icon-undo'" onclick="rejectFunc()">拒绝</a>
+			商品编码: <input class="easyui-textbox" type="text" name="code" id="code"
+				style="width: 166px; height: 35px; line-height: 35px;"></input>
+			商品名称: <input class="easyui-textbox" type="text" name="name" id="name"
+				style="width: 166px; height: 35px; line-height: 35px;"></input>
+			用户名称: <input class="easyui-textbox" type="text" name="UserName" id="username"
+				style="width: 166px; height: 35px; line-height: 35px;"></input> <a
+				href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search"
+				data-options="selected:true" onclick="searchAll()">查询</a> <a
+				href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reload"
+				onclick="resetsearch()">重置</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="lib/jquery.min.js"></script>
+	<script type="text/javascript" src="lib/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="lib/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="lib/datagrid-detailview.js"></script>
+	<script type="text/javascript" src="lib/custom/pageFilter.js"></script>
+
+	<script type="text/javascript">
+		$(function() {
+			$('#tt')
+					.datagrid(
+							{
+								title : '商品申请列表',
+								width : 'auto',
+								height : 600,
+								idField : "itemid",
+								rownumbers : false,
+								singleSelect : false,
+								autoRowHeight : false,
+								pagination : true,
+								fitColumns : true,
+								striped : true,
+								checkOnSelect : true,
+								selectOnCheck : true,
+								collapsible : false,
+								toolbar : '#tb',
+								pageSize : 10,
+								/* data : getData(), */
+								columns : [ [ {
+									field : 'ck',
+									checkbox : true,
+									width : '5%'
+								}, {
+									field : 'gId',
+									title : '商品编号',
+									width : '10%',
+									align : 'center',
+									sortable : true
+								}, {
+									field : 'gName',
+									title : '商品名称',
+									width : '15%',
+									align : 'center'
+								}, {
+									field : 'gPrice',
+									title : '价格',
+									width : '10%',
+									align : 'center',
+									sortable : true
+								}, {
+									field : 'gDescribe',
+									title : '商品描述',
+									width : '20%',
+									align : 'center'
+								}, {
+									field : 'gSign',
+									title : '商品状态',
+									width : '10%',
+									align : 'center',
+									sortable : true
+								}, {
+									field : 'gBId',
+									title : '商品品牌',
+									width : '10%',
+									align : 'center'
+								}, {
+									field : 'gDeId',
+									title : '程度类型',
+									width : '10%',
+									align : 'center'
+								}, {
+									field : 'gUId',
+									title : '所属用户',
+									width : '10%',
+									align : 'center'
+								}, ] ],
+								view : detailview,
+								detailFormatter : function(rowIndex, rowData) {
+									var htmlimg = '<table><tr><td rowspan=7 style="border:0">';
+									for(var img = 0 ; img < rowData.gPic.length ; img++){
+										htmlimg += '<img src="' + rowData.gPic[img].pUrl + '" style="height:100px;width:100px;margin-right:8px;">'
+									}
+									htmlimg += '</td></tr></table>';
+									return htmlimg;
+								}
+							}).datagrid('clientPaging');
+
+		});
+		function getData() {
+			$.ajax({
+				type : "get",
+				async : true,
+				url : "../goods/listToBack.action",
+				dataType : "json",
+				data : {},
+				success : function(data) {
+					console.log(data);
+					if (data.status == 'success') {
+						var rows = [];
+						rows = data.data;
+						for (var i = 0; i < rows.length; i++) {
+							if (rows[i].gSign == 0) {
+								rows[i].gSign = '未审核';
+							} else if (rows[i].gSign == 1) {
+								rows[i].gSign = '已通过';
+							} else if (rows[i].gSign == 2) {
+								rows[i].gSign = '待付款';
+							} else {
+								rows[i].gSign = '处理完成';
+							}
+
+							rows[i].gBId = rows[i].gBId.bDescribe;
+							rows[i].gDeId = rows[i].gDeId.deDescribe;
+							rows[i].gUId = rows[i].gUId.uName;
+							rows[i].gPic = data.picList[i];
+						}
+						$('#tt').datagrid('loadData', rows);
+					} else {
+						//没有数据或服务器错误
+					}
 				}
-				else{
-					addTab(node.text, url, '', node.attributes['iframe']);
-				}
+			});
+		}
+		getData();
+		$.extend($.fn.datagrid.methods, {
+			getEditingRowIndexs : function(jq) {
+				var rows = $.data(jq[0], "datagrid").panel
+						.find('.datagrid-row-editing');
+				var indexs = [];
+				rows.each(function(i, row) {
+					var index = row.sectionRowIndex;
+					if (indexs.indexOf(index) == -1) {
+						indexs.push(index);
+					}
+				});
+				return indexs;
 			}
 		});
-		
-		/**
-		* Name 选项卡初始化
-		*/
-		$('#wu-tabs').tabs({
-			tools:[{
-				iconCls:'icon-reload',
-				border:false,
-				handler:function(){
-					$('#wu-datagrid').datagrid('reload');
+		function resetsearch(){
+	    	$("#code").textbox('setValue','');
+	    	$("#name").textbox('setValue','');
+	    	$("#username").textbox('setValue','');
+	    	getData();
+	    }
+		function searchAll(){
+	    	var conds = {
+	    		gId:'',
+	    		gName:'',
+	    		gUId:''
+	    	}
+	    	if($('#code').textbox('getValue') != ''){
+	    		conds.gId = $('#code').textbox('getValue');
+	    	}else{
+	    		delete conds.gId;
+	    	}
+	    	if($('#name').textbox('getValue') != ''){
+	    		conds.gName = $('#name').textbox('getValue');
+	    	}else{
+	    		delete conds.gName;
+	    	}
+	    	if($('#username').textbox('getValue') != ''){
+	    		conds.gUId = $('#username').textbox('getValue');
+	    	}else{
+	    		delete conds.gUId;
+	    	}
+	    	if($('#code').textbox('getValue') == '' && $('#name').textbox('getValue') == ''&& $('#username').textbox('getValue') == ''){
+	    		getData();
+	    	}
+	    	$.ajax({
+				type:"post",
+				async:true,
+				url:"../goods/listByConds.action",
+				dataType:"json",
+				data:{
+					conds:JSON.stringify(conds)
+				},
+				success:function(data){
+					if(data.status == 'success'){
+						var rows = [];
+	       				rows = data.data;
+	       				for(var i = 0 ; i < rows.length ; i++){
+	       					if(rows[i].gSign == 0){
+	       						rows[i].gSign = '未审核';
+	       					}else if(rows[i].gSign == 1){
+	       						rows[i].gSign = '已通过';
+	       					}else if(rows[i].gSign == 2){
+	       						rows[i].gSign = '待付款';
+	       					}else{
+	       						rows[i].gSign = '处理完成';
+	       					}
+	       					
+	       					rows[i].gBId = rows[i].gBId.bDescribe;
+	       					rows[i].gDeId = rows[i].gDeId.deDescribe;
+	       					rows[i].gUId = rows[i].gUId.uName;
+	       					rows[i].gPic = data.picList[i];
+	       				}
+	       				$('#tt').datagrid('loadData', rows);
+					}else{
+						resetsearch();
+						alert(data.mes);
+					}
 				}
-			}]
-		});
-			
-		/**
-		* Name 添加菜单选项
-		* Param title 名称
-		* Param href 链接
-		* Param iconCls 图标样式
-		* Param iframe 链接跳转方式（true为iframe，false为href）
-		*/	
-		function addTab(title, href, iconCls, iframe){
-			var tabPanel = $('#wu-tabs');
-			if(!tabPanel.tabs('exists',title)){
-				var content = '<iframe scrolling="auto" frameborder="0"  src="'+ href +'" style="width:100%;height:100%;"></iframe>';
-				if(iframe){
-					tabPanel.tabs('add',{
-						title:title,
-						content:content,
-						iconCls:iconCls,
-						fit:true,
-						cls:'pd3',
-						closable:true
-					});
-				}
-				else{
-					tabPanel.tabs('add',{
-						title:title,
-						href:href,
-						iconCls:iconCls,
-						fit:true,
-						cls:'pd3',
-						closable:true
-					});
-				}
+			});
+	    }
+		function appendFunc() {
+			$.messager.defaults = {
+				ok : '确定',
+				cancel : '取消',
+				width : '200px'
+			};
+			var row = $('#tt').datagrid('getSelected');
+			if (row) {
+				$.messager.confirm('操作提示', '确认通过?', function(r) {
+					if (r) {
+						var rindex = $('#tt').datagrid('getRowIndex', row);
+						//alert(rindex);
+						$('#tt').datagrid('deleteRow', rindex);
+						$.ajax({
+							type : "post",
+							async : true,
+							url : "../goods/updateToSign.action",//传个1
+							dataType : "json",
+							data : {
+								gId : row.gId,
+								gSign : '1'
+							},
+							success : function(data) {
+								if (data.status == 'success') {
+									alert(data.mes);
+									getData();
+								} else {
+									alert(data.mes);
+								}
+							}
+						});
+					} else {
+						$('#dg').datagrid('clearSelections');
+					}
+				});
+			} else {
+				$.messager.alert("操作提示", "请至少选中一行!", "error", function() {
+				});
 			}
-			else
-			{
-				tabPanel.tabs('select',title);
-			}
+
 		}
-		/**
-		* Name 移除菜单选项
-		*/
-		function removeTab(){
-			var tabPanel = $('#wu-tabs');
-			var tab = tabPanel.tabs('getSelected');
-			if (tab){
-				var index = tabPanel.tabs('getTabIndex', tab);
-				tabPanel.tabs('close', index);
+		function rejectFunc() {
+			$.messager.defaults = {
+				ok : '确定',
+				cancel : '取消',
+				width : '200px'
+			};
+			var row = $('#tt').datagrid('getSelected');
+			if (row) {
+				$.messager.confirm('操作提示', '确认拒绝?', function(r) {
+					if (r) {
+						var rindex = $('#tt').datagrid('getRowIndex', row);
+						//alert(rindex);
+						$('#tt').datagrid('deleteRow', rindex);
+						$.ajax({
+							type : "post",
+							async : true,
+							url : "../goods/updateToSign.action",//传个1
+							dataType : "json",
+							data : {
+								gId : row.gId,
+								gSign : '3'
+							},
+							success : function(data) {
+								if (data.status == 'success') {
+									alert(data.mes);
+									getData();
+								} else {
+									alert(data.mes);
+								}
+							}
+						});
+					} else {
+						$('#dg').datagrid('clearSelections');
+					}
+				});
+			} else {
+				$.messager.alert("操作提示", "请至少选中一行!", "error", function() {
+				});
 			}
+
 		}
+		/* 
+		function searchAll(){
+			var conds = {
+				gId:'',
+				gName:'',
+				gUName:''
+				
+			}
+			if($('#code').textbox('getValue') != ''){
+				conds.gId = $('#code').textbox('getValue');
+			}else{
+				delete conds.gId;
+			}
+			if($('#name').textbox('getValue') != ''){
+				conds.gName = $('#name').textbox('getValue');
+			}else{
+				delete conds.gName;
+			}
+			if($('#UserName').textbox('getValue') != ''){
+				conds.gUName = $('#UserName').textbox('getValue');
+			}else{
+				delete conds.gUName;
+			}
+			if($('#code').textbox('getValue') == '' && $('#name').textbox('getValue') == '' && $('#UserName').textbox('getValue') == ''){
+				getData();
+			}
+			$.ajax({
+				type:"post",
+				async:true,
+				url:"../goods/listByConds.action",
+				dataType:"json",
+				data:{
+					conds:JSON.stringify(conds)
+				},
+				success:function(data){
+					if(data.status == 'success'){
+						$('#dg').datagrid('loadData', data.data);
+					}else{
+						resetsearch();
+						alert(data.mes);
+					}
+				}
+			});
+		} 
+		 */
 	</script>
 </body>
 </html>
