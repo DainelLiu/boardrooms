@@ -294,5 +294,20 @@ public class UsersAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	
+	@Action(value="logout")
+	public String logout() throws IOException{
+		try{
+			ServletActionContext.getRequest().getSession().removeAttribute("loginUser");
+			JSONObject jobj = JSONObject.fromObject("{mes:\'注销成功!\',status:\'success\'}");
+			ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+			ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		}catch(Exception e){
+			JSONObject jobj = JSONObject.fromObject("{mes:\'注销失败!\',status:\'failed\'}");
+			ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+			ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		}
+		return null;
+	}
 
 }

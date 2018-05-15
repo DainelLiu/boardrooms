@@ -35,7 +35,7 @@ public class Reserve implements Serializable{
 	//结束时间
 	private String resEndtime;
 	//预约状态
-	private String resSign;
+	private int resSign;
 	@Id
 	@GenericGenerator(name="systemUUID",strategy="uuid")  
 	@GeneratedValue(generator="systemUUID")
@@ -81,10 +81,10 @@ public class Reserve implements Serializable{
 	public void setResEndtime(String resEndtime) {
 		this.resEndtime = resEndtime;
 	}
-	public String getResSign() {
+	public int getResSign() {
 		return resSign;
 	}
-	public void setResSign(String resSign) {
+	public void setResSign(int resSign) {
 		this.resSign = resSign;
 	}
 	@Override
@@ -93,7 +93,7 @@ public class Reserve implements Serializable{
 				+ ", resStarttime=" + resStarttime + ", resEndtime=" + resEndtime + ", resSign=" + resSign + "]";
 	}
 	public Reserve(String resId, BoardRoom resBId, Department resDId, Users resUId, String resStarttime,
-			String resEndtime, String resSign) {
+			String resEndtime, int resSign) {
 		super();
 		this.resId = resId;
 		this.resBId = resBId;

@@ -21,7 +21,7 @@
                     </tr>
                     <tr>
                         <td>结束时间:</td>
-                        <td><input class="easyui-datetimebox" name="resEndtime" id="endtime" value="" style="width:200px;height:35px;"></td>
+                        <td><input class="easyui-datetimebox" name="resEndtime" id="endtime" value="" style="width:200px;height:35px;margin-left:2px;"></td>
                     </tr>
                     <tr>
                         <td>会议室:</td>
@@ -75,27 +75,27 @@
                                 </tr>-->
 
                             </table>
-                            <input type="hidden" name="bId" style="width:200px;height:35px;">
+                            <input type="hidden" name="resBId" id="resBId1" style="width:200px;height:35px;">
                         </td>
                     </tr>
                     <tr>
                         <td>开会部门:</td>
                         <td>
-                            <input class="easyui-textbox" id="resDId" style="width:200px;height:35px;" readonly>
-                            <input type="hidden" name="resDId" style="width:200px;height:35px;">
+                            <input class="easyui-textbox" type="text" id="resDId0" style="width:200px;height:35px;margin-left:2px;" readonly>
+                            <input type="hidden" name="resDId" id="resDId1" style="width:200px;height:35px;">
                         </td>
                     </tr>
                     <tr>
                         <td>预定人:</td>
                         <td>
-                            <input class="easyui-textbox" id="resUId" style="width:200px;height:35px;" readonly>
-                            <input type="hidden" name="resUId" style="width:200px;height:35px;">
+                            <input class="easyui-textbox" type="text" id="resUId0" style="width:200px;height:35px;margin-left:2px;" readonly>
+                            <input type="hidden" name="resUId" id="resUId1" style="width:200px;height:35px;">
                         </td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>
-                            <input type="submit" value="预定">
+                            <input type="button" value="预定" onclick="add()">
                         </td>
                     </tr>
                 </table>
@@ -112,6 +112,10 @@
 <script type="text/javascript" src="lib/custom/util.js"></script>
 <script type="text/javascript">
     var loginUser = JSON.parse(Util.getSession('loginUser'));
+    $('#resDId0').val(loginUser.uDId.dName);
+    $('#resUId0').val(loginUser.uName);
+    $('#resDId1').val(loginUser.uDId.dId);
+    $('#resUId1').val(loginUser.uId);
     $(function(){
         $('#dg').datagrid({
             title:'部门列表',
@@ -186,12 +190,8 @@
             }
         }).datagrid('clientPaging');
         getAllRooms();
-        $('#resDId').val(loginUser.uDId.dName);
-        $('#resUId').val(loginUser.uName);
-        $('input[name="resDId"]').val(loginUser.uDId.dId);
-        $('input[name="resUId"]').val(loginUser.uId);
         $('#endtime').datetimebox({
-            stopFirstChangeEvent: true,
+            stopFirstChangeEvent: false,
             onChange: function() {
                 var options = $(this).datetimebox('options');
                 if(options.stopFirstChangeEvent) {
@@ -496,12 +496,28 @@
             }
         });
     }
+    function add(){
+        $('#ff').form('submit', {
+            url:'',
+            success:function(data){
+                if(data){
+                    $.messager.alert('信息提示','提交成功！','info');
+                    $('#ff').form('clear');
+                    getAllRooms();
+                }
+                else
+                {
+                    $.messager.alert('信息提示','提交失败！','info');
+                }
+            }
+        });
+    }
     function chooseRoom(bid){
-        $('#tb_'+bid).css('border','1px solid #32cd99');
         $('#in-table tr td div').each(function(index,item){
             $(this).css('border','1px solid #cccccc');
         });
-        $('input[name="bId"]').val(bid);
+        $('#tb_'+bid).css('border','1px solid #32cd99');
+        $('#resBId1').val(bid);
     }
 
 </script>

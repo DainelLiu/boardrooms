@@ -91,6 +91,7 @@ private IBoardRoomDao boardroomDao;
 		reserve.setResDId(departmentDao.getById(resDId));
 		reserve.setResUId(usersDao.getById(resUId));
 		reserve.setResStarttime(resStarttime);
+		reserve.setResSign(1);
 		reserve.setResEndtime(resEndtime);
 		JSONObject jobj = new JSONObject();
 		if(reserveDao.save(reserve)) {
