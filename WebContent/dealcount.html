@@ -12,8 +12,8 @@
     <table id="dg"></table>
 
     <div id="tb" style="height:auto">
-        <label for="room">会议室</label>
-        <select name="room" id="room"></select>
+        <label for="room1">会议室</label>
+        <select name="room" id="room1"></select>
         <label>时间范围</label>
         <input class="easyui-datebox" name="resStarttime" id="start" value="" style="width:200px;height:35px;">
         -
@@ -30,18 +30,9 @@
                 <th>次数编号</th>
                 <th>起止时间</th>
             </thead>
-            <tr>
-                <td width="60" align="right">1</td>
-                <td>2017-05-10 10:30 -- 2018-05-10 11:30</td>
-            </tr>
-            <tr>
-                <td width="60" align="right">1</td>
-                <td>2017-05-10 10:30 -- 2018-05-10 11:30</td>
-            </tr>
-            <tr>
-                <td width="60" align="right">1</td>
-                <td>2017-05-10 10:30 -- 2018-05-10 11:30</td>
-            </tr>
+            <tbody id="infoTb">
+
+            </tbody>
         </table>
     </form>
 </div>
@@ -156,7 +147,7 @@
     		url:"./reserve/searchByCount.action",
     		dataType:"json",
     		data:{
-                resBId:$('#room').val(),
+                resBId:$('#room1').val(),
                 resStarttime:$('#start').datebox('getValue'),
                 resEndtime:$('#end').datebox('getValue')
             },
@@ -408,7 +399,7 @@
                             html += '<option value="'+item.bId+'">'+item.bName+'</option>'
                         }
                     }
-                    $('#room').empty().append(html);
+                    $('#room1').empty().append(html);
                 }else{
                     //没有数据或服务器错误
                 }
@@ -422,7 +413,7 @@
             url:"./reserve/searchByCount.action",
             dataType:"json",
             data:{
-                resBId:$('#room').val(),
+                resBId:$('#room1').val(),
                 resStarttime:$('#start').datebox('getValue'),
                 resEndtime:$('#end').datebox('getValue')
             },
@@ -459,12 +450,13 @@
             dataType:"json",
             data:{
                 resDId:dId,
-                resBId:$('#room').val(),
-                resStarttime:$('#start').datetimebox('getValue'),
-                resEndtime:$('#end').datetimebox('getValue')
+                resBId:$('#room1').val(),
+                resStarttime:$('#start').datebox('getValue'),
+                resEndtime:$('#end').datebox('getValue')
             },
             success:function(data){
                 console.log(data);
+                //infoTb循环
                 if(data.status == 'success'){
                     $('#abs-dialog-2').dialog({
                         closed: true,
