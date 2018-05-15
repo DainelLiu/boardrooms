@@ -223,7 +223,7 @@
     		}
     	});
     }
-    getData();
+    // getData();
     $.extend($.fn.datagrid.methods, {
         getEditingRowIndexs: function(jq) {
             var rows = $.data(jq[0], "datagrid").panel.find('.datagrid-row-editing');
@@ -407,8 +407,8 @@
             url:"./boardroom/listAll.action",
             dataType:"json",
             data:{
-                resStarttime:$('#starttime').val(),
-                resEndtime:$('#endtime').val()
+                resStarttime:$('#starttime').datetimebox('getValue'),
+                resEndtime:$('#endtime').datetimebox('getValue')
             },
             success:function(data){
                 console.log(data);

@@ -12,16 +12,40 @@
     <table id="dg"></table>
 
     <div id="tb" style="height:auto">
-        <label for="room">开始时间</label>
+        <label for="room">会议室</label>
         <select name="room" id="room"></select>
-        <label for="starttime">开始时间</label>
-        <input class="easyui-datetimebox" name="resStarttime" id="starttime" value="" style="width:200px;height:35px;">
-        <label for="endtime">结束时间</label>
-        <input class="easyui-datetimebox" name="resEndtime" id="endtime" value="" style="width:200px;height:35px;margin-left:2px;">
+        <label>时间范围</label>
+        <input class="easyui-datebox" name="resStarttime" id="start" value="" style="width:200px;height:35px;">
+        -
+        <input class="easyui-datebox" name="resStarttime" id="end" value="" style="width:200px;height:35px;">
         <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:false"
            onclick="searchAll()">搜索</a>
     </div>
 </div>
+<!-- Begin of easyui-dialog -->
+<div id="abs-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+    <form id="abs-form-2" method="post">
+        <table>
+            <thead>
+                <th>次数编号</th>
+                <th>起止时间</th>
+            </thead>
+            <tr>
+                <td width="60" align="right">1</td>
+                <td>2017-05-10 10:30 -- 2018-05-10 11:30</td>
+            </tr>
+            <tr>
+                <td width="60" align="right">1</td>
+                <td>2017-05-10 10:30 -- 2018-05-10 11:30</td>
+            </tr>
+            <tr>
+                <td width="60" align="right">1</td>
+                <td>2017-05-10 10:30 -- 2018-05-10 11:30</td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!-- End of easyui-dialog -->
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="lib/easyui-lang-zh_CN.js"></script>
@@ -52,9 +76,10 @@
             pageSize:10,
             /* data:getData(), */
             columns:[[
-                {field:'bName',title:'会议室',width:'25%',align:'center',sortable:true},
-                {field:'useNum',title:'使用次数',width:'30%',align:'center'},
-                {field:'depart',title:'使用部门',width:'30%',align:'center'},
+                {field:'departId',title:'部门编号',width:'30%',align:'center'},
+                {field:'departName',title:'使用部门',width:'30%',align:'center'},
+                {field:'useNum',title:'使用次数',width:'30%',align:'center',sortable:true},
+                {field:'_option',title:'操作',width:'30%',align:'center',formatter:formatOper}
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -105,7 +130,6 @@
 //                $('#rejectBtn').linkbutton('disable');
             }
         }).datagrid('clientPaging');
-        getAllRooms();
         $('#endtime').datetimebox({
             stopFirstChangeEvent: false,
             onChange: function() {
@@ -117,16 +141,25 @@
                 //以下写onchange的逻辑
                 getRooms();
             }
-        })
+        });
+        getRooms();
     });
+    function formatOper(val,row,index){
+        console.log(val+":"+row+":"+index);
+        return '<a href="#" onclick="getInfo('+index+')">修改</a>';
+    }
     function getData(){
     	//获取用户列表
         $.ajax({
     		type:"get",
-    		async:true,
-    		url:"./department/list.action",
+    		async:false,
+    		url:"./reserve/searchByCount.action",
     		dataType:"json",
-    		data:{},
+    		data:{
+                resBId:$('#room').val(),
+                resStarttime:$('#start').datebox('getValue'),
+                resEndtime:$('#end').datebox('getValue')
+            },
     		success:function(data){
     			console.log(data);
     			if(data.status == 'success'){
@@ -136,13 +169,11 @@
        				for(var i = 0 ; i < rows.length ; i++){
        				    var item = rows[i];
        				    var obj = {
-       				        bName:'',
                             useNum:0,
                             depart:''
                         }
-                        obj.bName = item.bName;
-       				    obj.useNum = item.list.length;
-       				    obj.depart = item.dName;
+                        obj.depart = item.dName;
+                        obj.useNum = item.list.length;
        				    trueRow.push(obj);
                     }
        				$('#dg').datagrid('loadData', trueRow);
@@ -328,103 +359,7 @@
         }
     }
 
-    function getAllRooms(){
-        //获取用户列表
-        $.ajax({
-            type:"get",
-            async:true,
-            url:"./boardroom/listAll.action",
-            dataType:"json",
-            data:{
-                resStarttime:$('#starttime').val(),
-                resEndtime:$('#endtime').val()
-            },
-            success:function(data){
-                console.log(data);
-                if(data.status == 'success'){
-                    var rows = [];
-                    rows = data.data;
-                    var html = '';
-                    for(var i = 0 ; i < rows.length ; i++){
-                        var item = rows[i];
-                        if(i == 0){
-                            html += '<tr>';
-                        }
-                        if(i%5 === 0){
-                            html += '<tr>';
-                        }
-                        html += '<td onclick="chooseRoom(\''+item.bId+'\')">';
-                        html += '<div id="tb_'+item.bId+'" style="width: 150px;height: 150px;border: 1px solid #cccccc;text-align: center;">';
-                        html += '<p>'+item.bName+'</p>';
-                        html += '<p>可容纳<span>'+item.bNum+'</span>人</p>';
-                        html += '<p>'+item.bAdd+'</p>';
-                        if(item.bEquipment == 1){
-                            html += '<p>有投影仪</p>';
-                        }else{
-                            html += '<p>无投影仪</p>';
-                        }
-                        html += '</div>';
-                        html += '</td>';
-                        if((i+1)%5 === 0){
-                            html += '</tr>';
-                        }
-                    }
-                    $('#in-table').empty().append(html);
-                }else{
-                    //没有数据或服务器错误
-                }
-            }
-        });
-    }
 
-    function getRooms(){
-        //获取用户列表
-        $.ajax({
-            type:"get",
-            async:true,
-            url:"./boardroom/searchByTime.action",
-            dataType:"json",
-            data:{
-                resStarttime:$('#starttime').datetimebox('getValue'),
-                resEndtime:$('#endtime').datetimebox('getValue')
-            },
-            success:function(data){
-                console.log(data);
-                if(data.status == 'success'){
-                    var rows = [];
-                    rows = data.data;
-                    var html = '';
-                    for(var i = 0 ; i < rows.length ; i++){
-                        var item = rows[i];
-                        if(i == 0){
-                            html += '<tr>';
-                        }
-                        if(i%5 === 0){
-                            html += '<tr>';
-                        }
-                        html += '<td onclick="chooseRoom(\''+item.bId+'\')">';
-                        html += '<div id="tb_'+item.bId+'" style="width: 150px;height: 150px;border: 1px solid #cccccc;text-align: center;">';
-                        html += '<p>'+item.bName+'</p>';
-                        html += '<p>可容纳<span>'+item.bNum+'</span>人</p>';
-                        html += '<p>'+item.bAdd+'</p>';
-                        if(item.bEquipment == 1){
-                            html += '<p>有投影仪</p>';
-                        }else{
-                            html += '<p>无投影仪</p>';
-                        }
-                        html += '</div>';
-                        html += '</td>';
-                        if((i+1)%5 === 0){
-                            html += '</tr>';
-                        }
-                    }
-                    $('#in-table').empty().append(html);
-                }else{
-                    //没有数据或服务器错误
-                }
-            }
-        });
-    }
     function add(){
         $('#ff').form('submit', {
             url:'',
@@ -453,7 +388,7 @@
         //获取用户列表
         $.ajax({
             type:"get",
-            async:true,
+            async:false,
             url:"./boardroom/listAll.action",
             dataType:"json",
             data:{},
@@ -474,6 +409,68 @@
                     $('#room').empty().append(html);
                 }else{
                     //没有数据或服务器错误
+                }
+            }
+        });
+    }
+    function searchAll(){
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./reserve/searchByCount.action",
+            dataType:"json",
+            data:{
+                resBId:$('#room').val(),
+                resStarttime:$('#start').datebox('getValue'),
+                resEndtime:$('#end').datebox('getValue')
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    var trueRow = [];
+                    rows = data.data;
+                    for(var i = 0 ; i < rows.length ; i++){
+                        var item = rows[i];
+                        var obj = {
+                            useNum:0,
+                            depart:''
+                        }
+                        obj.depart = item.dName;
+                        obj.useNum = item.list.length;
+                        trueRow.push(obj);
+                    }
+                    $('#dg').datagrid('loadData', trueRow);
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
+    }
+    function getInfo(dId){
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./reserve/listAllByBId.action",
+            dataType:"json",
+            data:{
+                resDId:dId,
+                resBId:$('#room').val(),
+                resStarttime:$('#start').datetimebox('getValue'),
+                resEndtime:$('#end').datetimebox('getValue')
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    $('#abs-dialog-2').dialog({
+                        closed: true,
+                        modal:true,
+                        title: "详细信息",
+                        buttons: []
+                    });
+                }else{
+                    //没有数据或服务器错误
+                    alert('获取详情失败!');
                 }
             }
         });
