@@ -17,7 +17,7 @@
         <label>时间范围</label>
         <input class="easyui-datebox" name="resStarttime" id="start" value="" style="width:200px;height:35px;">
         -
-        <input class="easyui-datebox" name="resStarttime" id="end" value="" style="width:200px;height:35px;">
+        <input class="easyui-datebox" name="resEndtime" id="end" value="" style="width:200px;height:35px;">
         <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:false"
            onclick="searchAll()">搜索</a>
     </div>
@@ -137,7 +137,7 @@
     });
     function formatOper(val,row,index){
         console.log(val+":"+row+":"+index);
-        return '<a href="#" onclick="getInfo('+index+')">修改</a>';
+        return '<a href="#" onclick="getInfo('+val+')">修改</a>';
     }
     function getData(){
     	//获取用户列表
@@ -160,6 +160,7 @@
        				for(var i = 0 ; i < rows.length ; i++){
        				    var item = rows[i];
        				    var obj = {
+   				    		_option:'',
                             departId:'',
                             useNum:0,
                             departName:''
@@ -167,6 +168,7 @@
                         obj.departId = item.departId;
                         obj.useNum = item.useNum;
                         obj.departName = item.departName;
+                        obj._option = item.departId;
        				    trueRow.push(obj);
                     }
        				$('#dg').datagrid('loadData', trueRow);
@@ -426,13 +428,15 @@
                     for(var i = 0 ; i < rows.length ; i++){
                         var item = rows[i];
                         var obj = {
-                            departId:'',
-                            useNum:0,
-                            departName:''
-                        }
-                        obj.departId = item.departId;
-                        obj.useNum = item.useNum;
-                        obj.departName = item.departName;
+       				    		_option:'',
+                                departId:'',
+                                useNum:0,
+                                departName:''
+                            }
+                            obj.departId = item.departId;
+                            obj.useNum = item.useNum;
+                            obj.departName = item.departName;
+                            obj._option = item.departId;
                         trueRow.push(obj);
                     }
                     $('#dg').datagrid('loadData', trueRow);
