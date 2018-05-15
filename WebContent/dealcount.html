@@ -70,7 +70,7 @@
                 {field:'departId',title:'部门编号',width:'30%',align:'center'},
                 {field:'departName',title:'使用部门',width:'30%',align:'center'},
                 {field:'useNum',title:'使用次数',width:'30%',align:'center',sortable:true},
-                {field:'_option',title:'操作',width:'30%',align:'center',formatter:formatOper}
+                {field:'option',title:'操作',width:'10%',align:'center',formatter:formatOper}
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -160,7 +160,7 @@
        				for(var i = 0 ; i < rows.length ; i++){
        				    var item = rows[i];
        				    var obj = {
-   				    		_option:'',
+   				    		option:'',
                             departId:'',
                             useNum:0,
                             departName:''
@@ -168,7 +168,7 @@
                         obj.departId = item.departId;
                         obj.useNum = item.useNum;
                         obj.departName = item.departName;
-                        obj._option = item.departId;
+                        obj.option = item.departId;
        				    trueRow.push(obj);
                     }
                     console.log(trueRow);
@@ -429,7 +429,7 @@
                     for(var i = 0 ; i < rows.length ; i++){
                         var item = rows[i];
                         var obj = {
-       				    		_option:'',
+       				    		option:'',
                                 departId:'',
                                 useNum:0,
                                 departName:''
@@ -437,7 +437,7 @@
                             obj.departId = item.departId;
                             obj.useNum = item.useNum;
                             obj.departName = item.departName;
-                            obj._option = item.departId;
+                            obj.option = item.departId;
                         trueRow.push(obj);
                     }
                     $('#dg').datagrid('loadData', trueRow);

@@ -259,16 +259,16 @@ public class ReserveAction {
 		Department department = new Department();
 		String dId;
 		int num = 0;
-		String hqlOne = "from Reserve group by resBId where 1=1 and resBId ='" + resBId + "' and resStarttime <= '" + resStarttime
+		String hqlOne = "from Reserve  where 1=1 and resBId ='" + resBId + "' and resStarttime <= '" + resStarttime
 				+ "' and resStarttime >= '" + resEndtime + "'or resEndtime >= '" + resStarttime
-				+ "' and resEndtime <= '" + resEndtime + "'";
+				+ "' and resEndtime <= '" + resEndtime + "' group by resDId";
 
 		String hql = "from Reserve dName where 1=1 and resBId ='" + resBId + "' and resStarttime <= '" + resStarttime
 				+ "' and resStarttime >= '" + resEndtime + "'or resEndtime >= '" + resStarttime
 				+ "' and resEndtime <= '" + resEndtime + "'";
 		JSONArray jsonArr = new JSONArray();
 		JSONObject tempJson = new JSONObject();
-		List<Object> reserveTypelist = reserveDao.getAllByConds(hqlOne);//这个就是最后的显示的list吧？这个是去了重的
+		List<Object> reserveTypelist = reserveDao.getAllByConds(hqlOne);
 		for (int i = 0; i < reserveTypelist.size(); i++) {
 			reserve = (Reserve) reserveTypelist.get(i);
 			dId = reserve.getResDId().getdId();
