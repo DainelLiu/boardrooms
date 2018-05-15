@@ -169,11 +169,13 @@
        				for(var i = 0 ; i < rows.length ; i++){
        				    var item = rows[i];
        				    var obj = {
+                            departId:'',
                             useNum:0,
-                            depart:''
+                            departName:''
                         }
-                        obj.depart = item.dName;
-                        obj.useNum = item.list.length;
+                        obj.departId = item.departId;
+                        obj.useNum = item.useNum;
+                        obj.departName = item.departName;
        				    trueRow.push(obj);
                     }
        				$('#dg').datagrid('loadData', trueRow);
@@ -433,11 +435,13 @@
                     for(var i = 0 ; i < rows.length ; i++){
                         var item = rows[i];
                         var obj = {
+                            departId:'',
                             useNum:0,
-                            depart:''
+                            departName:''
                         }
-                        obj.depart = item.dName;
-                        obj.useNum = item.list.length;
+                        obj.departId = item.departId;
+                        obj.useNum = item.useNum;
+                        obj.departName = item.departName;
                         trueRow.push(obj);
                     }
                     $('#dg').datagrid('loadData', trueRow);
