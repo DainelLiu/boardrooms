@@ -166,7 +166,7 @@
 
 <script type="text/javascript">
 	$(function(){
-		var loginUser = JSON.parse(Util.getSession("adminloginUser"));
+		var loginUser = JSON.parse(Util.getSession("loginUser"));
 		if(loginUser == null || loginUser == ''){
 			alert('请先登录!');
 			window.location.href = 'login.html';
