@@ -173,21 +173,21 @@
 		}else{
 			$('#username').text(loginUser.username);
 		}
+		$('#username').text(loginUser.uName);
 		if(loginUser.uRId.rId == '60284706635a2fc601635a30e9a31000'){
 			//普通用户
 			$('#message').show();
 			$('#dealroom').show();
-		}else if(loginUser.uRId.rId == '60284706635a2fc601635a30e9a31000'){
+		}else if(loginUser.uRId.rId == '40284706635ed7e601635ee4fd110006'){
 			//经理
 			$('#message').show();
 			$('#dealroom').show();
-			$('#roomcount').show();
 		}else{
 			$('#depart').show();
 			$('#room').show();
 			$('#message').show();
 			$('#dealroom').show();
-			$('#role').show();
+			/* $('#role').show(); */
 			$('#roomcount').show();
 		}
 	})
