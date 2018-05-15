@@ -213,10 +213,24 @@
             },
             success:function(data){
                 console.log(data);
-                //infoTb循环
+                var list = data.data;
+                var html = '';
+                for(var i = 0 ; i < list.length ; i++){
+                    var item = list[i];
+                    html += '<tr>';
+                    html += '<td>';
+                    html += (i+1);
+                    html += '</td>';
+                    html += '<td>';
+                    html += item.resStarttime +' -- '+item.resEndtime;
+                    html += '</td>';
+                    html += '<tr>';
+                }
+                $('#infoTb').empty().append(html);
                 if(data.status == 'success'){
                     $('#abs-dialog-2').dialog({
-                        closed: true,
+                        width:300,
+                        closed: false,
                         modal:true,
                         title: "详细信息",
                         buttons: []
