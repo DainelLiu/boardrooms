@@ -259,13 +259,13 @@ public class ReserveAction {
 		Department department = new Department();
 		String dId;
 		int num = 0;
-		String hqlOne = "from Reserve  where 1=1 and resBId ='" + resBId + "' and resStarttime <= '" + resStarttime
+		String hqlOne = "from Reserve  where 1=1 and resBId ='" + resBId + "' and (resStarttime <= '" + resStarttime
 				+ "' and resStarttime >= '" + resEndtime + "'or resEndtime >= '" + resStarttime
-				+ "' and resEndtime <= '" + resEndtime + "' group by resDId";
+				+ "' and resEndtime <= '" + resEndtime + "') group by resDId";
 
-		String hql = "from Reserve dName where 1=1 and resBId ='" + resBId + "' and resStarttime <= '" + resStarttime
+		String hql = "from Reserve dName where 1=1 and resBId ='" + resBId + "' and (resStarttime <= '" + resStarttime
 				+ "' and resStarttime >= '" + resEndtime + "'or resEndtime >= '" + resStarttime
-				+ "' and resEndtime <= '" + resEndtime + "'";
+				+ "' and resEndtime <= '" + resEndtime + "')";
 		JSONArray jsonArr = new JSONArray();
 		JSONObject tempJson = new JSONObject();
 		List<Object> reserveTypelist = reserveDao.getAllByConds(hqlOne);
@@ -307,9 +307,9 @@ public class ReserveAction {
 		String resEndtime = ServletActionContext.getRequest().getParameter("resEndtime");
 		String resBId = ServletActionContext.getRequest().getParameter("resBId");
 		String resDId = ServletActionContext.getRequest().getParameter("resDId");
-		String hql = "from Reserve dName where 1=1  and resDId ='"+resDId+"' and resBId ='" + resBId + "' and resStarttime <= '" + resStarttime
+		String hql = "from Reserve dName where 1=1  and resDId ='"+resDId+"' and resBId ='" + resBId + "' and (resStarttime <= '" + resStarttime
 				+ "' and resStarttime >= '" + resEndtime + "'or resEndtime >= '" + resStarttime
-				+ "' and resEndtime <= '" + resEndtime + "'";
+				+ "' and resEndtime <= '" + resEndtime + "')";
 		System.out.println(hql);
 		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
 		JSONObject jobj = new JSONObject();

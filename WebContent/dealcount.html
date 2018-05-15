@@ -13,7 +13,7 @@
 
     <div id="tb" style="height:auto">
         <label for="room1">会议室</label>
-        <select name="room" id="room1"></select>
+        <select name="room" id="room1" style="width:200px;height:35px;"></select>
         <label>时间范围</label>
         <input class="easyui-datebox" name="resStarttime" id="start" value="" style="width:200px;height:35px;">
         -
@@ -23,18 +23,8 @@
     </div>
 </div>
 <!-- Begin of easyui-dialog -->
-<div id="abs-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
-    <form id="abs-form-2" method="post">
-        <table>
-            <thead>
-                <th>次数编号</th>
-                <th>起止时间</th>
-            </thead>
-            <tbody id="infoTb">
-
-            </tbody>
-        </table>
-    </form>
+<div id="abs-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-info'" style="width:600px;padding:10px;">
+        <table id="dg1"></table>
 </div>
 <!-- End of easyui-dialog -->
 <script type="text/javascript" src="lib/jquery.min.js"></script>
@@ -89,7 +79,7 @@
     });
     function formatOper(val,row,index){
         console.log(val+":"+row+":"+index);
-        return '<a href="javascript:getInfo(\''+val+'\')">修改</a>';
+        return '<a href="javascript:getInfo(\''+val+'\')">详情</a>';
     }
     function getData(){
     	//获取用户列表
@@ -123,8 +113,7 @@
                         obj.option = item.departId;
        				    trueRow.push(obj);
                     }
-                    console.log(trueRow);
-       				// $('#dg').datagrid('loadData', trueRow);
+       				$('#dg').datagrid('loadData', trueRow);
     			}else{
     				//没有数据或服务器错误
     			}
@@ -200,6 +189,24 @@
         });
     }
     function getInfo(dId){
+    	$('#dg1').datagrid({
+            title:'统计列表',
+            rownumbers:false,
+            singleSelect:true,
+            autoRowHeight:false,
+            pagination:false,
+            fitColumns:true,
+            striped:true,
+            checkOnSelect:true,
+            selectOnCheck:true,
+            collapsible:false,
+            /* data:getData(), */
+            columns:[[
+                {field:'numId',title:'次数编号',width:'10%',align:'center'},
+                {field:'time',title:'起止时间——结束时间',width:'70%',align:'center'},
+                {field:'uName',title:'预约人',width:'10%',align:'center'},
+            ]],
+        });
         $.ajax({
             type:"get",
             async:false,
@@ -214,22 +221,23 @@
             success:function(data){
                 console.log(data);
                 var list = data.data;
-                var html = '';
-                for(var i = 0 ; i < list.length ; i++){
-                    var item = list[i];
-                    html += '<tr>';
-                    html += '<td>';
-                    html += (i+1);
-                    html += '</td>';
-                    html += '<td>';
-                    html += item.resStarttime +' -- '+item.resEndtime;
-                    html += '</td>';
-                    html += '<tr>';
+                var trueRow = [];
+   				rows = data.data;
+   				for(var i = 0 ; i < list.length ; i++){
+   				    var item = list[i];
+   				    var obj = {
+                        numId:i+1,
+                        time:'',
+                        uName:''
+                    }
+                    obj.time = item.resStarttime + ' -- '+item.resEndtime;
+                    obj.uName = item.resUId.uName;
+   				    trueRow.push(obj);
                 }
-                $('#infoTb').empty().append(html);
+   				$('#dg1').datagrid('loadData', trueRow);
                 if(data.status == 'success'){
                     $('#abs-dialog-2').dialog({
-                        width:300,
+                        width:800,
                         closed: false,
                         modal:true,
                         title: "详细信息",

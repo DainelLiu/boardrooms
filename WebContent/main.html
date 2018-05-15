@@ -74,28 +74,28 @@
             </h2>
 
             <ul class="sider-nav">
-                <li class="firstMenu">
+                <li class="firstMenu" id="depart" style="display:none;">
                      <a href="javascript:void(0);" onclick="toPage('部门管理','department.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe61d;</span>
                         <span class="sider-nav-title">部门列表</span>
                         <i class="iconfont">&#xe642;</i>
                     </a>
                 </li>
-                <li class="firstMenu">
+                <li class="firstMenu" id="room" style="display:none;">
                     <a href="javascript:void(0);" onclick="toPage('会议室管理','boardroom.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe61d;</span>
                         <span class="sider-nav-title">会议室列表</span>
                         <i class="iconfont">&#xe642;</i>
                     </a>
                 </li>
-                <li class="firstMenu">
+                <li class="firstMenu" id="message" style="display:none;">
                     <a href="javascript:void(0);" onclick="toPage('留言板管理','message.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe60d;</span>
                         <span class="sider-nav-title">查看留言板</span>
                         <i class="iconfont">&#xe642;</i>
                     </a>
                 </li>
-                 <li class="firstMenu">
+                 <li class="firstMenu" id="dealroom" style="display:none;">
                      <a href="javascript:;">
                          <span class="iconfont sider-nav-icon">&#xe60d;</span>
                          <span class="sider-nav-title">会议室预定</span>
@@ -106,14 +106,14 @@
                          <li><a href="javascript:void(0);" onclick="toPage('预订情况','reserve.html',this);">预订情况</a></li>
                      </ul>
                 </li>
-                 <li class="firstMenu">
+                 <li class="firstMenu" id="role" style="display:none;">
                     <a href="javascript:void(0);" onclick="toPage('角色管理','role.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe60d;</span>
                         <span class="sider-nav-title">角色列表</span>
                         <i class="iconfont">&#xe642;</i>
                     </a>
                 </li>
-                 <li class="firstMenu">
+                 <li class="firstMenu" id="roomcount" style="display:none;">
                     <a href="javascript:void(0);" onclick="toPage('信息统计','dealcount.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe60d;</span>
                         <span class="sider-nav-title">会议室预定统计</span>
@@ -172,6 +172,23 @@
 			window.location.href = 'login.html';
 		}else{
 			$('#username').text(loginUser.username);
+		}
+		if(loginUser.uRId.rId == '60284706635a2fc601635a30e9a31000'){
+			//普通用户
+			$('#message').show();
+			$('#dealroom').show();
+		}else if(loginUser.uRId.rId == '60284706635a2fc601635a30e9a31000'){
+			//经理
+			$('#message').show();
+			$('#dealroom').show();
+			$('#roomcount').show();
+		}else{
+			$('#depart').show();
+			$('#room').show();
+			$('#message').show();
+			$('#dealroom').show();
+			$('#role').show();
+			$('#roomcount').show();
 		}
 	})
     $('.easyui-tabs1').tabs({
