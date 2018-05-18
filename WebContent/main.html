@@ -81,6 +81,13 @@
                         <i class="iconfont">&#xe642;</i>
                     </a>
                 </li>
+                <li class="firstMenu" id="users" style="display:none;">
+                     <a href="javascript:void(0);" onclick="toPage('人员管理','users.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe61d;</span>
+                        <span class="sider-nav-title">人员列表</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
                 <li class="firstMenu" id="room" style="display:none;">
                     <a href="javascript:void(0);" onclick="toPage('会议室管理','boardroom.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe61d;</span>
@@ -185,6 +192,7 @@
 		}else{
 			$('#depart').show();
 			$('#room').show();
+			$('#users').show();
 			$('#message').show();
 			$('#dealroom').show();
 			/* $('#role').show(); */
