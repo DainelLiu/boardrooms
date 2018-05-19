@@ -30,7 +30,40 @@
 <script type="text/javascript" src="lib/datagrid-detailview.js"></script>
 <script type="text/javascript" src="lib/custom/pageFilter.js"></script>
 <script type="text/javascript">
+    var deptId_choose,rId_choose;
     $(function(){
+        var rows = [];
+        var deptRows = [];
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./role/listAll.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    rows = data.data;
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./department/listAll.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    deptRows = data.data;
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
         $('#dg').datagrid({
             title:'用户列表',
             width:'auto',
@@ -49,14 +82,24 @@
             /* data:getData(), */
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
-                {field:'bId',title:'人员编号',width:'25%',align:'center',sortable:true},
-                {field:'bName',title:'会议室名称',width:'10%',align:'center',editor:'text'},
-                {field:'bNum',title:'容纳人数',width:'10%',align:'center',editor:'text'},
-                {field:'bAdd',title:'会议室地址',width:'10%',align:'center',editor:'text'},
-                {field:'bEquipment',title:'是否有投影仪',width:'10%',align:'center',editor:'text'},
-                {field:'bSign',title:'使用状态',width:'10%',align:'center',editor:'text'},
-                {field:'bSign',title:'使用状态',width:'10%',align:'center',editor:'text'},
-                {field:'bSign',title:'使用状态',width:'10%',align:'center',editor:'text'},
+                {field:'uId',title:'用户编号',width:'25%',align:'center',sortable:true},
+                {field:'uName',title:'用户名',width:'10%',align:'center',editor:'text'},
+                {field:'uPassword',title:'密码',width:'10%',align:'center',editor:'text'},
+                {field:'uRealName',title:'真实姓名',width:'10%',align:'center',editor:'text'},
+                {field:'uBirth',title:'出生日期',width:'10%',align:'center',editor:'text'},
+                {field:'uInformation',title:'联系方式',width:'10%',align:'center',editor:'text'},
+                {field:'uDId',title:'所属部门',width:'10%',align:'center',editor:{type:'combobox',options:{valueField:'dId',textField:'dName',data:deptRows,onSelect:function(data){
+                                var row = $('#dg').datagrid('getSelected');
+                                var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                                var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'uDId'}).target;
+                                deptId_choose = thisTarget.combobox('getValue');
+                            }}}},
+                {field:'uRId',title:'当前角色',width:'10%',align:'center',editor:{type:'combobox',options:{valueField:'rId',textField:'rName',data:rows,onSelect:function(data){
+                                var row = $('#dg').datagrid('getSelected');
+                                var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                                var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'uRId'}).target;
+                                rId_choose = thisTarget.combobox('getValue');
+                            }}}},
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -67,35 +110,8 @@
                         $('#dg').datagrid("endEdit", item);
                     });
                 }
-//                $('#addBtn').linkbutton('disable');
-//                $('#delBtn').linkbutton('enable');
-//                $('#saveBtn').linkbutton('enable');
-//                $('#rejectBtn').linkbutton('enable');
             },
-           /* onClickCell: function(index,field,value){
-                $(this).datagrid('beginEdit', index);
-                var ed = $(this).datagrid('getEditor', {index:index,field:field});
-            },*/
             onBeforeEdit:function(index,row){
-                /*//修改时要获取选择到的行
-                var rows = row;
-                //如果只选择了一行则可以进行修改，否则不操作
-                if (rows.length == 1) {
-                    //修改之前先关闭已经开启的编辑行，当调用endEdit该方法时会触发onAfterEdit事件
-                    if (index != undefined) {
-                        $('#dg').datagrid("endEdit", index);
-                    }
-                    //当无编辑行时
-                    if (index == undefined) {
-                        //获取到当前选择行的下标
-                        var index = $('#dg').datagrid("getRowIndex", rows[0]);
-                        //开启编辑
-                        $('#dg').datagrid("beginEdit", index);
-                        //把当前开启编辑的行赋值给全局变量editRow
-                        //应该取消当前列表的所有选择行，要不然双击之后无法再选择其他行进行编辑
-                        $('#dg').datagrid("unselectAll");
-                    }
-                }*/
             },
             onAfterEdit:function(index,row){
             },
@@ -113,7 +129,7 @@
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./boardroom/list.action",
+    		url:"./users/listAll.action",
     		dataType:"json",
     		data:{},
     		success:function(data){
@@ -122,16 +138,9 @@
    					var rows = [];
        				rows = data.data;
        				for(var i = 0 ; i < rows.length ; i++){
-       				    if(rows[i].bEquipment == 0){
-                            rows[i].bEquipment = '有';
-                        }else{
-                            rows[i].bEquipment = '无';
-                        }
-                        if(rows[i].bSign == 0){
-                            rows[i].bSign = '停用';
-                        }else{
-                            rows[i].bSign = '可用';
-                        }
+       				    var item = rows[i];
+       				    item.uDId = item.uDId.dName;
+                        item.uRId = item.uRId.rName;
                     }
        				$('#dg').datagrid('loadData', rows);
     			}else{
@@ -183,7 +192,7 @@
             if (endEditing()){
                 $('#dg').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'bName'});
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'uName'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
@@ -206,7 +215,7 @@
             });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
             $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'uName'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
         }
     }
@@ -223,10 +232,10 @@
                     $.ajax({
             			type:"post",
             			async:true,
-            			url:"./boardroom/delete.action",
+            			url:"./users/delete.action",
             			dataType:"json",
             			data:{
-            				bId:row.bId
+            				uId:row.uId
             			},
             			success:function(data){
             				if(data.status == 'success'){
@@ -260,17 +269,20 @@
             console.log(row);
             //发ajax请求后台
           //发ajax请求后台
-            if(row.bId == '' || row.bId == null){
+            if(row.uId == '' || row.uId == null){
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./boardroom/save.action",
+        			url:"./users/save.action",
         			dataType:"json",
         			data:{
-        				bName:row.bName,
-        				bNum:row.bNum,
-        				bAdd:row.bAdd,
-        				bEquipment:row.bEquipment,
+                        uName:row.uName,
+                        uPassword:row.uPassword,
+                        uRealName:row.uRealName,
+                        uBirth:row.uBirth,
+                        uInformation:row.uInformation,
+                        uDId:deptId_choose,
+                        uRId:rId_choose
         			},
         			success:function(data){
         				if(data.status == 'success'){
@@ -284,11 +296,17 @@
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./brand/update.action",
+        			url:"./users/update.action",
         			dataType:"json",
         			data:{
-        				bId:row.bId,
-       					bDescribe:row.bDescribe
+        				uId:row.uId,
+                        uName:row.uName,
+                        uPassword:row.uPassword,
+                        uRealName:row.uRealName,
+                        uBirth:row.uBirth,
+                        uInformation:row.uInformation,
+                        uDId:deptId_choose,
+                        uRId:rId_choose
         			},
         			success:function(data){
         				if(data.status == 'success'){
