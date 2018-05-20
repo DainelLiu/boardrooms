@@ -327,5 +327,28 @@ public class ReserveAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	
+	@Action(value = "listAllByDId")
+	public String listAllByDId() throws IOException {
+
+		String resDId = ServletActionContext.getRequest().getParameter("resDId");
+		String hql = "from Reserve dName where 1=1  and resDId ='"+resDId + "' ORDER BY resStarttime DESC";
+		System.out.println(hql);
+		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
+		JSONObject jobj = new JSONObject();
+		if (reserveTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(reserveTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 
 }
