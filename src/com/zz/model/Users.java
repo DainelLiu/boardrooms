@@ -41,8 +41,8 @@ public class Users implements Serializable {
 	private Role uRId;
 	
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
-	@GeneratedValue(generator="systemUUID")
+	/*@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GeneratedValue(generator="systemUUID")*/
 	public String getuId() {
 		return uId;
 	}

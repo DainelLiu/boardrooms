@@ -2,7 +2,9 @@ package com.zz.action;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 
 import com.zz.dao.IBoardRoomDao;
 import com.zz.model.BoardRoom;
+import com.zz.model.Department;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
 
@@ -49,7 +52,12 @@ public class BoardRoomAction {
 		String bNum = ServletActionContext.getRequest().getParameter("bNum");
 		String bAdd = ServletActionContext.getRequest().getParameter("bAdd");
 		String bEquipment = ServletActionContext.getRequest().getParameter("bEquipment");
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		Date day=new Date();
 		
+		String hql ="from BoardRoom ORDER BY bId DESC";
+		List<Object> boardroomTypelist = boardroomDao.getAllByConds(hql);
+		String bId = ((BoardRoom) boardroomTypelist.get(0)).getbId();
 		
 		BoardRoom boardroom = new BoardRoom();
 		
@@ -58,6 +66,23 @@ public class BoardRoomAction {
 		boardroom.setbAdd(bAdd);
 		boardroom.setbEquipment(Integer.parseInt(bEquipment));
 		boardroom.setbSign(1);
+		
+		
+		boolean sign=(bId.substring(0,8)).equals(df.format(day));
+		int num = ((Integer.parseInt(bId.substring(8)))+1);
+		if(sign){
+			if(num<10){
+				boardroom.setbId(df.format(day)+"00"+(Integer.toString(num)));
+			}else if(Integer.parseInt(bId.substring(8))<=10 && Integer.parseInt(bId.substring(8))<100){
+				boardroom.setbId(df.format(day)+"0"+(Integer.toString(num)));
+			}else{
+				boardroom.setbId(df.format(day)+(Integer.toString(num)));
+			}
+		}else{
+			boardroom.setbId(df.format(day)+"001");
+		}
+		
+		
 		JSONObject jobj = new JSONObject();
 		if(boardroomDao.save(boardroom)) {
 			jobj.put("mes", "保存成功!");

@@ -1,7 +1,9 @@
 package com.zz.action;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,6 +19,7 @@ import com.zz.dao.IDepartmentDao;
 import com.zz.dao.IReserveDao;
 import com.zz.dao.IUsersDao;
 import com.zz.model.Department;
+import com.zz.model.Message;
 import com.zz.model.Reserve;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -88,7 +91,13 @@ public class ReserveAction {
 		String resUId = ServletActionContext.getRequest().getParameter("resUId");
 		String resStarttime = ServletActionContext.getRequest().getParameter("resStarttime");
 		String resEndtime = ServletActionContext.getRequest().getParameter("resEndtime");
-
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		Date day=new Date();
+		String hql ="from Reserve ORDER BY resId resId";
+		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
+		String resId = ((Reserve) reserveTypelist.get(0)).getResId();
+		
+		
 		Reserve reserve = new Reserve();
 		reserve.setResBId(boardroomDao.getById(resBId));
 		reserve.setResDId(departmentDao.getById(resDId));
@@ -96,6 +105,22 @@ public class ReserveAction {
 		reserve.setResStarttime(resStarttime);
 		reserve.setResSign(1);
 		reserve.setResEndtime(resEndtime);
+		
+		
+		boolean sign=(resId.substring(0,8)).equals(df.format(day));
+		int num = ((Integer.parseInt(resId.substring(8)))+1);
+		if(sign){
+			if(num<10){
+				reserve.setResId(df.format(day)+"00"+(Integer.toString(num)));
+			}else if(Integer.parseInt(resId.substring(8))<=10 && Integer.parseInt(resId.substring(8))<100){
+				reserve.setResId(df.format(day)+"0"+(Integer.toString(num)));
+			}else{
+				reserve.setResId(df.format(day)+(Integer.toString(num)));
+			}
+		}else{
+			reserve.setResId(df.format(day)+"001");
+		}
+		
 		JSONObject jobj = new JSONObject();
 		if (reserveDao.save(reserve)) {
 			jobj.put("mes", "保存成功!");
@@ -333,6 +358,30 @@ public class ReserveAction {
 
 		String resDId = ServletActionContext.getRequest().getParameter("resDId");
 		String hql = "from Reserve dName where 1=1  and resDId ='"+resDId + "' ORDER BY resStarttime DESC";
+		System.out.println(hql);
+		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
+		JSONObject jobj = new JSONObject();
+		if (reserveTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(reserveTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+
+	
+	@Action(value = "listAllByUId")
+	public String listAllByUId() throws IOException {
+
+		String resUId = ServletActionContext.getRequest().getParameter("resUId");
+		String hql = "from Reserve dName where 1=1  and resUId ='"+resUId + "' ORDER BY resStarttime DESC";
 		System.out.println(hql);
 		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
 		JSONObject jobj = new JSONObject();

@@ -37,8 +37,8 @@ public class Reserve implements Serializable{
 	//预约状态
 	private int resSign;
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
-	@GeneratedValue(generator="systemUUID")
+	/*@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GeneratedValue(generator="systemUUID")*/
 	public String getResId() {
 		return resId;
 	}

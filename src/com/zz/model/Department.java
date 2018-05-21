@@ -31,8 +31,8 @@ public class Department implements Serializable{
 	private int dNumber;
 	
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
-	@GeneratedValue(generator="systemUUID")
+	/*@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GeneratedValue(generator="systemUUID")*/
 	public String getdId() {
 		return dId;
 	}

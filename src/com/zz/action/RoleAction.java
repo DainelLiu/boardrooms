@@ -1,7 +1,9 @@
 package com.zz.action;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,6 +15,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
 import com.zz.dao.IRoleDao;
+import com.zz.model.Department;
 import com.zz.model.Role;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -45,8 +48,30 @@ public class RoleAction {
 	public String save() throws IOException{
 		
 		String rName = ServletActionContext.getRequest().getParameter("rName");
+		
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		Date day=new Date();
+		String hql ="from Role ORDER BY rId DESC";
+		List<Object> roleTypelist = roleDao.getAllByConds(hql);
+		String rId = ((Role) roleTypelist.get(0)).getrId();
+		
+		
 		Role role = new Role();
-		role.setrName(rName);
+		boolean sign=(rId.substring(0,8)).equals(df.format(day));
+		int num = ((Integer.parseInt(rId.substring(8)))+1);
+		if(sign){
+			if(num<10){
+				role.setrId(df.format(day)+"00"+(Integer.toString(num)));
+			}else if(Integer.parseInt(rId.substring(8))<=10 && Integer.parseInt(rId.substring(8))<100){
+				role.setrId(df.format(day)+"0"+(Integer.toString(num)));
+			}else{
+				role.setrId(df.format(day)+(Integer.toString(num)));
+			}
+		}else{
+			role.setrId(df.format(day)+"001");
+		}role.setrName(rName);
+		
+		
 		JSONObject jobj = new JSONObject();
 		
 		if(roleDao.save(role)) {
