@@ -34,8 +34,8 @@ public class Message implements Serializable{
 	//留言用户编号
 	private String mDescribe;
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
-	@GeneratedValue(generator="systemUUID")
+	/*@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GeneratedValue(generator="systemUUID")*/
 	public String getmId() {
 		return mId;
 	}

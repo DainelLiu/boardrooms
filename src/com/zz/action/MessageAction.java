@@ -1,7 +1,9 @@
 package com.zz.action;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import com.zz.dao.IBoardRoomDao;
 import com.zz.dao.IMessageDao;
 import com.zz.dao.IUsersDao;
+import com.zz.model.Department;
 import com.zz.model.Message;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -73,11 +76,29 @@ public class MessageAction {
 		String mUId = ServletActionContext.getRequest().getParameter("mUId");
 		String mDescribe = ServletActionContext.getRequest().getParameter("mDescribe");
 
-		Message message = new Message();
 		
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		Date day=new Date();
+		String hql ="from Message ORDER BY mId DESC";
+		List<Object> messageTypelist = messageDao.getAllByConds(hql);
+		String mId = ((Message) messageTypelist.get(0)).getmId();
+		Message message = new Message();
 		message.setmBId(boardroomDao.getById(mBId));
 		message.setmUId(usersDao.getById(mUId));
 		message.setmDescribe(mDescribe);
+		boolean sign=(mId.substring(0,8)).equals(df.format(day));
+		int num = ((Integer.parseInt(mId.substring(8)))+1);
+		if(sign){
+			if(num<10){
+				message.setmId(df.format(day)+"00"+(Integer.toString(num)));
+			}else if(Integer.parseInt(mId.substring(8))<=10 && Integer.parseInt(mId.substring(8))<100){
+				message.setmId(df.format(day)+"0"+(Integer.toString(num)));
+			}else{
+				message.setmId(df.format(day)+(Integer.toString(num)));
+			}
+		}else{
+			message.setmId(df.format(day)+"001");
+		}
 		JSONObject jobj = new JSONObject();
 		if (messageDao.save(message)) {
 			jobj.put("mes", "保存成功!");

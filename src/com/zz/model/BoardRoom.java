@@ -38,8 +38,8 @@ public class BoardRoom implements Serializable{
 	private int bSign;
 	
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
-	@GeneratedValue(generator="systemUUID")
+	/*@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GeneratedValue(generator="systemUUID")*/
 	public String getbId() {
 		return bId;
 	}

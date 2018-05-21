@@ -2,7 +2,9 @@ package com.zz.action;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,6 +19,7 @@ import com.zz.dao.IDepartmentDao;
 import com.zz.dao.IRoleDao;
 import com.zz.dao.IUsersDao;
 import com.zz.model.Department;
+import com.zz.model.Message;
 import com.zz.model.Users;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -79,6 +82,12 @@ public class UsersAction {
 		String uDId = ServletActionContext.getRequest().getParameter("uDId");
 		String uRId = ServletActionContext.getRequest().getParameter("uRId");
 
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		Date day=new Date();
+		String hql ="from Users ORDER BY uId DESC";
+		List<Object> usersTypelist = usersDao.getAllByConds(hql);
+		String uId = ((Users) usersTypelist.get(0)).getuId();
+		
 		Users users = new Users();
 		Department department = new Department();
 		users.setuName(uName);
@@ -88,7 +97,19 @@ public class UsersAction {
 		users.setuInformation(uInformation);
 		users.setuDId(departmentDao.getById(uDId));
 		users.setuRId(roleDao.getById(uRId));
-
+		boolean sign=(uId.substring(0,8)).equals(df.format(day));
+		int num = ((Integer.parseInt(uId.substring(8)))+1);
+		if(sign){
+			if(num<10){
+				users.setuId(df.format(day)+"00"+(Integer.toString(num)));
+			}else if(Integer.parseInt(uId.substring(8))<=10 && Integer.parseInt(uId.substring(8))<100){
+				users.setuId(df.format(day)+"0"+(Integer.toString(num)));
+			}else{
+				users.setuId(df.format(day)+(Integer.toString(num)));
+			}
+		}else{
+			users.setuId(df.format(day)+"001");
+		}
 		JSONObject jobj = new JSONObject();
 		if (usersDao.save(users)) {
 			int dNumber = (departmentDao.getById(uDId)).getdNumber();

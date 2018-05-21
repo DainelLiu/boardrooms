@@ -2,7 +2,9 @@ package com.zz.action;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -48,7 +50,27 @@ public class DepartmentAction {
 		String dName = ServletActionContext.getRequest().getParameter("dName");
 		String dDescribe = ServletActionContext.getRequest().getParameter("dDescribe");
 		String dNumber = ServletActionContext.getRequest().getParameter("dNumber");
+		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		Date day=new Date();
 		Department department = new Department();
+		String hql ="from Department ORDER BY dId DESC";
+		List<Object> departmentTypelist = departmentDao.getAllByConds(hql);
+		String depId = ((Department) departmentTypelist.get(0)).getdId();
+		//String depId = ((Department) departmentTypelist.get(0)).getdId().substring(8);
+		
+		boolean sign=(depId.substring(0,8)).equals(df.format(day));
+		int num = ((Integer.parseInt(depId.substring(8)))+1);
+		if(sign){
+			if(num<10){
+				department.setdId(df.format(day)+"00"+(Integer.toString(num)));
+			}else if(Integer.parseInt(depId.substring(8))<=10 && Integer.parseInt(depId.substring(8))<100){
+				department.setdId(df.format(day)+"0"+(Integer.toString(num)));
+			}else{
+				department.setdId(df.format(day)+(Integer.toString(num)));
+			}
+		}else{
+			department.setdId(df.format(day)+"001");
+		}
 		if (dNumber != null && !"".equals(dNumber)) {
 			department.setdNumber(Integer.parseInt(dNumber));
 		} else {
@@ -56,6 +78,7 @@ public class DepartmentAction {
 		}
 		department.setdDescribe(dDescribe);
 		department.setdName(dName);
+		
 
 		JSONObject jobj = new JSONObject();
 		if (departmentDao.save(department)) {
@@ -112,13 +135,13 @@ public class DepartmentAction {
 		Department department = departmentDao.getById(dId);
 		if (dName != null && !"".equals(dName)) {
 			department.setdName(dName);
-		} 
+		}
 		if (dDescribe != null && !"".equals(dDescribe)) {
 			department.setdDescribe(dDescribe);
-		} 
+		}
 		if (dNumber != null && !"".equals(dNumber)) {
 			department.setdNumber(Integer.parseInt(dNumber));
-		} 
+		}
 		JSONObject jobj = new JSONObject();
 
 		if (departmentDao.update(department)) {
@@ -219,11 +242,11 @@ public class DepartmentAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
-	
+
 	@Action(value = "searchBydName")
 	public String searchBydName() throws IOException {
 		String dName = URLDecoder.decode(ServletActionContext.getRequest().getParameter("dName"), "utf-8");
-		String hql ="from Department where 1=1 and dName LIKE '%"+dName+"%'  or dDescribe LIKE '%" +dName+"%'";
+		String hql = "from Department where 1=1 and dName LIKE '%" + dName + "%'  or dDescribe LIKE '%" + dName + "%'";
 		List<Object> departmentTypelist = departmentDao.getAllByConds(hql);// 获取所有类型数据，不带分页
 		JSONObject jobj = new JSONObject();
 		if (departmentTypelist.size() > 0) {
@@ -241,7 +264,4 @@ public class DepartmentAction {
 		return null;
 	}
 
-	
-	
-	
 }

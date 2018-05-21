@@ -28,8 +28,8 @@ public class Role implements Serializable{
 	//角色名称
 	private String rName;
 	@Id
-	@GenericGenerator(name="systemUUID",strategy="uuid")  
-	@GeneratedValue(generator="systemUUID")
+	/*@GenericGenerator(name="systemUUID",strategy="uuid")  
+	@GeneratedValue(generator="systemUUID")*/
 	public String getrId() {
 		return rId;
 	}
