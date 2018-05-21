@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>会议室管理系统</title>
+    <link rel="stylesheet" href="lib/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="lib/uimaker/icon.css">
+
+</head>
+<body>
+<div class="container">
+    <table id="dg_1"></table>
+</div>
+<!-- Begin of easyui-dialog -->
+<div id="abs-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-info'" style="width:600px;padding:10px;">
+        <table id="dg1_1"></table>
+</div>
+<!-- End of easyui-dialog -->
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="lib/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="lib/datagrid-detailview.js"></script>
+<script type="text/javascript" src="lib/custom/pageFilter.js"></script>
+<script type="text/javascript" src="lib/custom/util.js"></script>
+<script type="text/javascript">
+    var loginUser = JSON.parse(Util.getSession('loginUser'));
+    $('#resDId0').val(loginUser.uDId.dName);
+    $('#resUId0').val(loginUser.uName);
+    $('#resDId1').val(loginUser.uDId.dId);
+    $('#resUId1').val(loginUser.uId);
+    $(function() {
+        $('#dg_1').datagrid({
+            title:'统计列表',
+            width:'auto',
+            height:600,
+            rownumbers:false,
+            singleSelect:true,
+            autoRowHeight:false,
+            pagination:true,
+            fitColumns:true,
+            striped:true,
+            checkOnSelect:true,
+            selectOnCheck:true,
+            collapsible:false,
+            toolbar:null,
+            pageSize:10,
+            /*data:getData(),*/
+            columns:[[
+                {field: 'rId', title: '会议室', width: '30%', align: 'center'},
+                {field: 'starttime', title: '开始时间', width: '30%', align: 'center'},
+                {field: 'endtime', title: '结束时间', width: '30%', align: 'center'},
+                {field: 'deUId', title: '预订人', width: '10%', align: 'center'}
+            ]],
+        }).datagrid('clientPaging');
+        getData();
+    });
+
+    function getData(){
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./reserve/listAllByDId.action",
+            dataType:"json",
+            data:{
+                resDId:loginUser.uDId.dId
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    var trueRow = [];
+                    rows = data.data;
+                    for(var i = 0 ; i < rows.length ; i++){
+                        var item = rows[i];
+                        var obj = {
+                            rId:'',
+                            starttime:'',
+                            endtime:'',
+                            deUId:''
+                        }
+                        obj.rId = item.resBId.bName;
+                        obj.starttime = item.resStarttime;
+                        obj.endtime = item.resEndtime;
+                        obj.deUId = item.resUId.uName;
+                        trueRow.push(obj);
+                    }
+                    $('#dg_1').datagrid('loadData', trueRow);
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

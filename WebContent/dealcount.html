@@ -170,15 +170,15 @@
                     for(var i = 0 ; i < rows.length ; i++){
                         var item = rows[i];
                         var obj = {
-       				    		option:'',
-                                departId:'',
-                                useNum:0,
-                                departName:''
-                            }
-                            obj.departId = item.departId;
-                            obj.useNum = item.useNum;
-                            obj.departName = item.departName;
-                            obj.option = item.departId;
+                            option:'',
+                            departId:'',
+                            useNum:0,
+                            departName:''
+                        }
+                        obj.departId = item.departId;
+                        obj.useNum = item.useNum;
+                        obj.departName = item.departName;
+                        obj.option = item.departId;
                         trueRow.push(obj);
                     }
                     $('#dg').datagrid('loadData', trueRow);

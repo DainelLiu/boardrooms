@@ -127,6 +127,17 @@
                         <i class="iconfont">&#xe642;</i>
                     </a>
                 </li>
+                <li class="firstMenu" id="ucenter" style="display:none;">
+                    <a href="javascript:;">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">用户中心</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                    <ul class="sider-nav-s">
+                        <li><a href="javascript:void(0);" onclick="toPage('我的预定','myDeal.html',this);">我的预定</a></li>
+                        <li><a href="javascript:void(0);" onclick="toPage('个人资料','infos.html',this);">个人资料</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
 
@@ -172,8 +183,8 @@
 
 
 <script type="text/javascript">
+    var loginUser = JSON.parse(Util.getSession("loginUser"));
 	$(function(){
-		var loginUser = JSON.parse(Util.getSession("loginUser"));
 		if(loginUser == null || loginUser == ''){
 			alert('请先登录!');
 			window.location.href = 'login.html';
@@ -189,6 +200,7 @@
 			//经理
 			$('#message').show();
 			$('#dealroom').show();
+            $('#roomcount').show();
 		}else{
 			$('#depart').show();
 			$('#room').show();
@@ -265,7 +277,6 @@
 
         }
     })*/
-
     // setTimeout(function(){
     //    $('.tabs-panels').height($("#pf-page").height()-46);
     //    $('.panel-body').height($("#pf-page").height()-76)
@@ -273,10 +284,12 @@
     function toPage(title, url,thisObj){
         $('.sider-nav-s li').removeClass('active');
         $(thisObj).parent('li').addClass('active');
-
         if ($('#tabs').tabs('exists', title)){
             $('#tabs').tabs('select', title);
         } else {
+            if(loginUser.uRId.rName == '部门经理'){
+                url = 'dealcount_1.html';
+            }
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
             $('#tabs').tabs('add',{
                 title:title,

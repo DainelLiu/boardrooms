@@ -10,7 +10,7 @@
 <body>
 <div class="container">
 
-    <table id="dg"></table>
+    <table id="dg_2"></table>
 
     <div id="tb" style="height:auto">
         <a href="javascript:void(0)" id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
@@ -35,9 +35,10 @@
 <script type="text/javascript" src="lib/datagrid-detailview.js"></script>
 <script type="text/javascript" src="lib/custom/pageFilter.js"></script>
 <script type="text/javascript">
+    var bEquipment_choose=1,bSign_choose;
     $(function(){
-        $('#dg').datagrid({
-            title:'部门列表',
+        $('#dg_2_2').datagrid({
+            title:'会议室列表',
             width:'auto',
             height:600,
             rownumbers:false,
@@ -54,18 +55,30 @@
             /* data:getData(), */
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
-                {field:'dId',title:'部门编号',width:'25%',align:'center',sortable:true},
-                {field:'dName',title:'部门名称',width:'30%',align:'center',editor:'text'},
-                {field:'dDescribe',title:'部门描述',width:'30%',align:'center',editor:'text'},
-                {field:'dNumber',title:'部门人数',width:'10%',align:'center',editor:'text'},
+                {field:'bId',title:'会议室编号',width:'25%',align:'center',sortable:true},
+                {field:'bName',title:'会议室名称',width:'15%',align:'center',editor:'text'},
+                {field:'bNum',title:'容纳人数',width:'10%',align:'center',editor:'text'},
+                {field:'bAdd',title:'会议室地址',width:'25%',align:'center',editor:'text'},
+                {field:'bEquipment',title:'是否有投影仪',width:'10%',align:'center',editor:{type:'checkbox',options:{on:'有',off:'无'},onSelect:function(data){
+                            var row = $('#dg_2').datagrid('getSelected');
+                            var rowIndex = $('#dg_2').datagrid('getRowIndex',row);//获取行号
+                            var thisTarget = $('#dg_2').datagrid('getEditor', {'index':rowIndex,'field':'bEquipment'}).target;
+                            bEquipment_choose = thisTarget.checkbox('getValue');
+                        }}},
+                {field:'bSign',title:'使用状态',width:'10%',align:'center',editor:{type:'checkbox',options:{on:'可用',off:'停用'},onSelect:function(data){
+                            var row = $('#dg_2').datagrid('getSelected');
+                            var rowIndex = $('#dg_2').datagrid('getRowIndex',row);//获取行号
+                            var thisTarget = $('#dg_2').datagrid('getEditor', {'index':rowIndex,'field':'bSign'}).target;
+                            bSign_choose = thisTarget.checkbox('getValue');
+                        }}},
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
                 var indexs = $(this).datagrid('getEditingRowIndexs');
                 if(indexs.length > 0){
                     $.each(indexs,function(index,item){
-                        $('#dg').datagrid('rejectChanges', item);
-                        $('#dg').datagrid("endEdit", item);
+                        $('#dg_2').datagrid('rejectChanges', item);
+                        $('#dg_2').datagrid("endEdit", item);
                     });
                 }
 //                $('#addBtn').linkbutton('disable');
@@ -73,10 +86,10 @@
 //                $('#saveBtn').linkbutton('enable');
 //                $('#rejectBtn').linkbutton('enable');
             },
-           /* onClickCell: function(index,field,value){
-                $(this).datagrid('beginEdit', index);
-                var ed = $(this).datagrid('getEditor', {index:index,field:field});
-            },*/
+            /* onClickCell: function(index,field,value){
+                 $(this).datagrid('beginEdit', index);
+                 var ed = $(this).datagrid('getEditor', {index:index,field:field});
+             },*/
             onBeforeEdit:function(index,row){
                 /*//修改时要获取选择到的行
                 var rows = row;
@@ -84,17 +97,17 @@
                 if (rows.length == 1) {
                     //修改之前先关闭已经开启的编辑行，当调用endEdit该方法时会触发onAfterEdit事件
                     if (index != undefined) {
-                        $('#dg').datagrid("endEdit", index);
+                        $('#dg_2').datagrid("endEdit", index);
                     }
                     //当无编辑行时
                     if (index == undefined) {
                         //获取到当前选择行的下标
-                        var index = $('#dg').datagrid("getRowIndex", rows[0]);
+                        var index = $('#dg_2').datagrid("getRowIndex", rows[0]);
                         //开启编辑
-                        $('#dg').datagrid("beginEdit", index);
+                        $('#dg_2').datagrid("beginEdit", index);
                         //把当前开启编辑的行赋值给全局变量editRow
                         //应该取消当前列表的所有选择行，要不然双击之后无法再选择其他行进行编辑
-                        $('#dg').datagrid("unselectAll");
+                        $('#dg_2').datagrid("unselectAll");
                     }
                 }*/
             },
@@ -111,24 +124,36 @@
     });
     function getData(){
         $('#search').val('');
-    	//获取用户列表
+        //获取用户列表
         $.ajax({
-    		type:"get",
-    		async:true,
-    		url:"./department/list.action",
-    		dataType:"json",
-    		data:{},
-    		success:function(data){
-    			console.log(data);
-    			if(data.status == 'success'){
-   					var rows = [];
-       				rows = data.data;
-       				$('#dg').datagrid('loadData', rows);
-    			}else{
-    				//没有数据或服务器错误
-    			}
-    		}
-    	});
+            type:"get",
+            async:true,
+            url:"./boardroom/list.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    rows = data.data;
+                    for(var i = 0 ; i < rows.length ; i++){
+                        if(rows[i].bEquipment == 0){
+                            rows[i].bEquipment = '有';
+                        }else{
+                            rows[i].bEquipment = '无';
+                        }
+                        if(rows[i].bSign == 0){
+                            rows[i].bSign = '停用';
+                        }else{
+                            rows[i].bSign = '可用';
+                        }
+                    }
+                    $('#dg_2').datagrid('loadData', rows);
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
     }
     getData();
     $.extend($.fn.datagrid.methods, {
@@ -148,8 +173,8 @@
     var editIndex = undefined;
     function endEditing(){
         if (editIndex == undefined){return true}
-        if ($('#dg').datagrid('validateRow', editIndex)){
-            $('#dg').datagrid('endEdit', editIndex);
+        if ($('#dg_2').datagrid('validateRow', editIndex)){
+            $('#dg_2').datagrid('endEdit', editIndex);
             editIndex = undefined;
 //            $('#addBtn').linkbutton('enable');
 //            $('#delBtn').linkbutton('disable');
@@ -171,13 +196,13 @@
 
         if (editIndex != index){
             if (endEditing()){
-                $('#dg').datagrid('selectRow', index)
+                $('#dg_2').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'dDescribe'});
+                var ed = $('#dg_2').datagrid('getEditor', {index:index,field:'bName'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
-                $('#dg').datagrid('selectRow', editIndex);
+                $('#dg_2').datagrid('selectRow', editIndex);
             }
         }
     }
@@ -189,45 +214,47 @@
 //        $('#rejectBtn').linkbutton('enable');
         if (endEditing()){
             editIndex = 0;
-//            $('#dg').datagrid('insertRow',{'pid':'pid-'});
-            $('#dg').datagrid('insertRow',{
+//            $('#dg_2').datagrid('insertRow',{'pid':'pid-'});
+            $('#dg_2').datagrid('insertRow',{
                 index: editIndex,  // 索引从0开始
                 row: {'ck': true}
             });
-//            editIndex = $('#dg').datagrid('getRows').length-1;
-            $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+//            editIndex = $('#dg_2').datagrid('getRows').length-1;
+            $('#dg_2').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+            var ed = $('#dg_2').datagrid('getEditor', {index:editIndex,field:'bName'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+            var ed1 = $('#dg_2').datagrid('getEditor', {index:editIndex,field:'bSign'});
+            $(ed1.target).prop('checked','checked').attr('disabled','disabled');// 只读.checkbox('setValue','可用')
         }
     }
     // 删除
     function removeit(){
         $.messager.defaults = {ok: '确定', cancel: '取消', width: '200px'};
-        var row = $('#dg').datagrid('getSelected');
+        var row = $('#dg_2').datagrid('getSelected');
         if(row){
             $.messager.confirm('操作提示','确认删除?',function(r){
                 if (r){
-                    var rindex = $('#dg').datagrid('getRowIndex', row);
+                    var rindex = $('#dg_2').datagrid('getRowIndex', row);
                     //alert(rindex);
-                    $('#dg').datagrid('deleteRow', rindex);
+                    $('#dg_2').datagrid('deleteRow', rindex);
                     $.ajax({
-            			type:"post",
-            			async:true,
-            			url:"./department/delete.action",
-            			dataType:"json",
-            			data:{
-            				dId:row.dId
-            			},
-            			success:function(data){
-            				if(data.status == 'success'){
-            					getData();
-            				}else{
-            					alert(data.mes);
-            				}
-            			}
-            		});
+                        type:"post",
+                        async:true,
+                        url:"./boardroom/delete.action",
+                        dataType:"json",
+                        data:{
+                            bId:row.bId
+                        },
+                        success:function(data){
+                            if(data.status == 'success'){
+                                getData();
+                            }else{
+                                alert(data.mes);
+                            }
+                        }
+                    });
                 }else{
-                    $('#dg').datagrid('clearSelections');
+                    $('#dg_2').datagrid('clearSelections');
                 }
             });
         }else{
@@ -246,49 +273,48 @@
 //        $('#saveBtn').linkbutton('disable');
 //        $('#rejectBtn').linkbutton('disable');
         if (endEditing()) {
-            var row = $('#dg').datagrid('getSelected');
+            var row = $('#dg_2').datagrid('getSelected');
             console.log(row);
             //发ajax请求后台
-          //发ajax请求后台
-            if(row.dId == '' || row.dId == null){
-            	$.ajax({
-        			type:"post",
-        			async:true,
-        			url:"./department/save.action",
-        			dataType:"json",
-        			data:{
-        				dName:row.dName,
-        				dDescribe:row.dDescribe,
-        				dNumber:row.dNumber
-        			},
-        			success:function(data){
-        				if(data.status == 'success'){
-        					getData();
-        				}else{
-        					alert(data.mes);
-        				}
-        			}
-        		});
+            //发ajax请求后台
+            if(row.bId == '' || row.bId == null){
+                $.ajax({
+                    type:"post",
+                    async:true,
+                    url:"./boardroom/save.action",
+                    dataType:"json",
+                    data:{
+                        bName:row.bName,
+                        bNum:row.bNum,
+                        bAdd:row.bAdd,
+                        bEquipment:bEquipment_choose,
+                    },
+                    success:function(data){
+                        if(data.status == 'success'){
+                            getData();
+                        }else{
+                            alert(data.mes);
+                        }
+                    }
+                });
             }else{
-            	$.ajax({
-        			type:"post",
-        			async:true,
-        			url:"./department/update.action",
-        			dataType:"json",
-        			data:{
-        				dId:row.dId,
-        				dName:row.dName,
-        				dDescribe:row.dDescribe,
-        				dNumber:row.dNumber
-        			},
-        			success:function(data){
-        				if(data.status == 'success'){
-        					getData();
-        				}else{
-        					alert(data.mes);
-        				}
-        			}
-        		});
+                $.ajax({
+                    type:"post",
+                    async:true,
+                    url:"./brand/update.action",
+                    dataType:"json",
+                    data:{
+                        bId:row.bId,
+                        bDescribe:row.bDescribe
+                    },
+                    success:function(data){
+                        if(data.status == 'success'){
+                            getData();
+                        }else{
+                            alert(data.mes);
+                        }
+                    }
+                });
             }
         }
     }
@@ -299,9 +325,9 @@
 //        $('#saveBtn').linkbutton('disable');
 //        $('#rejectBtn').linkbutton('disable');
         if(endEditing()){
-            var row = $('#dg').datagrid('getSelected');
-            var rindex = $('#dg').datagrid('getRowIndex', row);
-            $('#dg').datagrid('rejectChanges', rindex);
+            var row = $('#dg_2').datagrid('getSelected');
+            var rindex = $('#dg_2').datagrid('getRowIndex', row);
+            $('#dg_2').datagrid('rejectChanges', rindex);
             getData();
         }
     }
@@ -310,17 +336,29 @@
         $.ajax({
             type:"get",
             async:false,
-            url:"./department/searchBydName.action",
+            url:"./boardroom/searchAll.action",
             dataType:"json",
             data:{
-                dName:encodeURI($('#search').val())
+                bName:encodeURI($('#search').val())
             },
             success:function(data){
                 console.log(data);
                 if(data.status == 'success'){
                     var rows = [];
                     rows = data.data;
-                    $('#dg').datagrid('loadData', rows);
+                    for(var i = 0 ; i < rows.length ; i++){
+                        if(rows[i].bEquipment == 0){
+                            rows[i].bEquipment = '有';
+                        }else{
+                            rows[i].bEquipment = '无';
+                        }
+                        if(rows[i].bSign == 0){
+                            rows[i].bSign = '停用';
+                        }else{
+                            rows[i].bSign = '可用';
+                        }
+                    }
+                    $('#dg_2').datagrid('loadData', rows);
                 }else{
                     //没有数据或服务器错误
                 }

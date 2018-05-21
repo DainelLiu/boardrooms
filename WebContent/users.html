@@ -82,11 +82,11 @@
             /* data:getData(), */
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
-                {field:'uId',title:'用户编号',width:'25%',align:'center',sortable:true},
+                {field:'uId',title:'用户编号',width:'22%',align:'center',sortable:true},
                 {field:'uName',title:'用户名',width:'10%',align:'center',editor:'text'},
-                {field:'uPassword',title:'密码',width:'10%',align:'center',editor:'text'},
+                {field:'uPassword',title:'密码',width:'10%',align:'center',editor:{type:'password'}},
                 {field:'uRealName',title:'真实姓名',width:'10%',align:'center',editor:'text'},
-                {field:'uBirth',title:'出生日期',width:'10%',align:'center',editor:'text'},
+                {field:'uBirth',title:'出生日期',width:'15%',align:'center',editor:{type:'datebox'}},
                 {field:'uInformation',title:'联系方式',width:'10%',align:'center',editor:'text'},
                 {field:'uDId',title:'所属部门',width:'10%',align:'center',editor:{type:'combobox',options:{valueField:'dId',textField:'dName',data:deptRows,onSelect:function(data){
                                 var row = $('#dg').datagrid('getSelected');

@@ -21,6 +21,11 @@
            onclick="acceptRow()">保存</a>
         <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:false"
            onclick="cancelrow()">撤回</a>
+        <input name="searchText" id="search" value="" style="width:200px;height:30px;">
+        <a href="javascript:void(0)" id="searchBtn" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:false"
+           onclick="searchAll()">搜索</a>
+        <a href="javascript:void(0)" id="clearBox" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:false"
+           onclick="getData()">重置</a>
     </div>
 </div>
 
@@ -30,6 +35,7 @@
 <script type="text/javascript" src="lib/datagrid-detailview.js"></script>
 <script type="text/javascript" src="lib/custom/pageFilter.js"></script>
 <script type="text/javascript">
+    var bEquipment_choose=1,bSign_choose;
     $(function(){
         $('#dg').datagrid({
             title:'会议室列表',
@@ -53,8 +59,18 @@
                 {field:'bName',title:'会议室名称',width:'15%',align:'center',editor:'text'},
                 {field:'bNum',title:'容纳人数',width:'10%',align:'center',editor:'text'},
                 {field:'bAdd',title:'会议室地址',width:'25%',align:'center',editor:'text'},
-                {field:'bEquipment',title:'是否有投影仪',width:'10%',align:'center',editor:'text'},
-                {field:'bSign',title:'使用状态',width:'10%',align:'center',editor:'text'},
+                {field:'bEquipment',title:'是否有投影仪',width:'10%',align:'center',editor:{type:'checkbox',options:{on:'有',off:'无'},onSelect:function(data){
+                            var row = $('#dg').datagrid('getSelected');
+                            var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                            var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'bEquipment'}).target;
+                            bEquipment_choose = thisTarget.checkbox('getValue');
+                        }}},
+                {field:'bSign',title:'使用状态',width:'10%',align:'center',editor:{type:'checkbox',options:{on:'可用',off:'停用'},onSelect:function(data){
+                            var row = $('#dg').datagrid('getSelected');
+                            var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                            var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'bSign'}).target;
+                            bSign_choose = thisTarget.checkbox('getValue');
+                        }}},
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -107,6 +123,7 @@
         }).datagrid('clientPaging');
     });
     function getData(){
+        $('#search').val('');
     	//获取用户列表
         $.ajax({
     		type:"get",
@@ -204,8 +221,10 @@
             });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
             $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bName'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+            var ed1 = $('#dg').datagrid('getEditor', {index:editIndex,field:'bSign'});
+            $(ed1.target).prop('checked','checked').attr('disabled','disabled');// 只读.checkbox('setValue','可用')
         }
     }
     // 删除
@@ -268,7 +287,7 @@
         				bName:row.bName,
         				bNum:row.bNum,
         				bAdd:row.bAdd,
-        				bEquipment:row.bEquipment,
+        				bEquipment:bEquipment_choose,
         			},
         			success:function(data){
         				if(data.status == 'success'){
@@ -311,6 +330,40 @@
             $('#dg').datagrid('rejectChanges', rindex);
             getData();
         }
+    }
+
+    function searchAll(){
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./boardroom/searchAll.action",
+            dataType:"json",
+            data:{
+                bName:encodeURI($('#search').val())
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var rows = [];
+                    rows = data.data;
+                    for(var i = 0 ; i < rows.length ; i++){
+                        if(rows[i].bEquipment == 0){
+                            rows[i].bEquipment = '有';
+                        }else{
+                            rows[i].bEquipment = '无';
+                        }
+                        if(rows[i].bSign == 0){
+                            rows[i].bSign = '停用';
+                        }else{
+                            rows[i].bSign = '可用';
+                        }
+                    }
+                    $('#dg').datagrid('loadData', rows);
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
     }
 
 </script>

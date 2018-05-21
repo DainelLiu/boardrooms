@@ -399,6 +399,24 @@
         }
     }
 
+    function add(){
+        $('#ff').form('submit', {
+            url:'',
+            success:function(data){
+                if(data){
+                    $.messager.alert('信息提示','提交成功！','info');
+                    $('#ff').form('clear');
+                    getAllRooms();
+                }
+                else
+                {
+                    $.messager.alert('信息提示','提交失败！','info');
+                }
+            }
+        });
+    }
+
+
     function getAllRooms(){
         //获取用户列表
         $.ajax({
