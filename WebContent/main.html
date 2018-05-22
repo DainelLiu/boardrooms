@@ -201,6 +201,7 @@
 			$('#message').show();
 			$('#dealroom').show();
             $('#roomcount').show();
+            $('#ucenter').show();
 		}else{
 			$('#depart').show();
 			$('#room').show();
@@ -209,6 +210,7 @@
 			$('#dealroom').show();
 			/* $('#role').show(); */
 			$('#roomcount').show();
+            $('#ucenter').show();
 		}
 	})
     $('.easyui-tabs1').tabs({
@@ -287,7 +289,7 @@
         if ($('#tabs').tabs('exists', title)){
             $('#tabs').tabs('select', title);
         } else {
-            if(loginUser.uRId.rName == '部门经理'){
+            if(url.indexOf('dealcount') != -1 && loginUser.uRId.rName == '部门经理'){
                 url = 'dealcount_1.html';
             }
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';

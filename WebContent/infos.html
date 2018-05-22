@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>会议室管理系统</title>
+    <link rel="stylesheet" href="lib/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="lib/uimaker/icon.css">
+
+</head>
+<body>
+<div class="container">
+    <div class="easyui-panel">
+        <div style="padding:10px 60px 20px 60px">
+            <form id="ff" method="post" action="./users/update.action">
+                <table cellpadding="5">
+                    <tr>
+                        <td>编号:</td>
+                        <td>
+                            <input class="easyui-textbox" name="uId" id="uId1" style="width:200px;height:35px;" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>用户名:</td>
+                        <td><input class="easyui-textbox" name="uName" id="uName1" value="" style="width:200px;height:35px;margin-left:2px;"></td>
+                    </tr>
+                    <tr>
+                        <td>密码:</td>
+                        <td><input class="easyui-textbox" type="password" name="uPassword" id="uPassword1" value="" style="width:200px;height:35px;margin-left:2px;" onfocus="myfocus()" onblur="myblur()"></td>
+                    </tr>
+                    <tr>
+                        <td>真实姓名:</td>
+                        <td><input class="easyui-textbox" name="uRealName" id="uRealName1" value="" style="width:200px;height:35px;margin-left:2px;"></td>
+                    </tr>
+                    <tr>
+                        <td>出生日期:</td>
+                        <td><input class="easyui-datebox" name="uBirth" id="uBirth1" value="" style="width:200px;height:35px;margin-left:2px;"></td>
+                    </tr>
+                    <tr>
+                        <td>联系方式:</td>
+                        <td><input class="easyui-textbox" name="uInformation" id="uInformation1" value="" style="width:200px;height:35px;margin-left:2px;"></td>
+                    </tr>
+                    <tr>
+                        <td>所属部门:</td>
+                        <td>
+                            <input class="easyui-textbox" type="text" id="uDId1" style="width:200px;height:35px;margin-left:2px;" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>当前角色:</td>
+                        <td>
+                            <input class="easyui-textbox" type="text" id="uRId1" style="width:200px;height:35px;margin-left:2px;" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="button" value="保存修改" onclick="add()">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="lib/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="lib/datagrid-detailview.js"></script>
+<script type="text/javascript" src="lib/custom/pageFilter.js"></script>
+<script type="text/javascript" src="lib/custom/util.js"></script>
+<script type="text/javascript">
+    var loginUser = JSON.parse(Util.getSession('loginUser'));
+    $('#resDId0').val(loginUser.uDId.dName);
+    $('#resUId0').val(loginUser.uName);
+    $('#resDId1').val(loginUser.uDId.dId);
+    $('#resUId1').val(loginUser.uId);
+    $(function(){
+        $('#uPassword1').textbox('textbox').bind('focus',function(){
+            $('#uPassword1').textbox('textbox').attr('type','text');
+        });
+        $('#uPassword1').textbox('textbox').bind('blur',function(){
+            $('#uPassword1').textbox('textbox').attr('type','password');
+        });
+        getData();
+    });
+    function getData(){
+    	//获取用户列表
+        $.ajax({
+    		type:"get",
+    		async:false,
+    		url:"./users/getById.action",
+    		dataType:"json",
+    		data:{
+                uId:loginUser.uId
+            },
+    		success:function(data){
+    			console.log(data);
+    			if(data.status == 'success'){
+   					var rows = [];
+       				rows = data.data;
+       				$("#uId1").textbox("setValue", rows.uId);
+                    $("#uName1").textbox("setValue", rows.uName);
+                    $("#uPassword1").textbox("setValue", rows.uPassword);
+                    $("#uRealName1").textbox("setValue", rows.uRealName);
+                    $("#uBirth1").datebox("setValue", rows.uBirth);
+                    $("#uInformation1").textbox("setValue", rows.uInformation);
+                    $("#uDId1").textbox("setValue", rows.uDId.dName);
+                    $("#uRId1").textbox("setValue", rows.uRId.rName);
+    			}else{
+    				//没有数据或服务器错误
+    			}
+    		}
+    	});
+    }
+    function add(){
+        $('#ff').form('submit', {
+            url:'',
+            success:function(data){
+                data = JSON.parse(data);
+                if(data.status == 'success'){
+                    $.messager.alert('信息提示','提交成功！','info');
+                    $('#ff').form('clear');
+                    Util.setSession("loginUser", JSON.stringify(data.loginUser));
+                    window.parent.location.href='main.html';
+                }
+                else
+                {
+                    $.messager.alert('信息提示','提交失败！','info');
+                }
+            }
+        });
+    }
+    function myfocus(){
+        $('#uPassword1').attr('type','text');
+    }
+    function myblur(){
+        $('#uPassword1').attr('type','password');
+    }
+
+</script>
+</body>
+</html>
