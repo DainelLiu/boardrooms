@@ -323,7 +323,7 @@ public class RolePowerAction {
 	public String searchByNotPId() throws IOException {
 		String rpRId = ServletActionContext.getRequest().getParameter("rpRId");
 		//from power where 1=1 and pId Not in(SElect rpPId FROM rolepower where rpRId='40284706635ed7e601635ee4fd110006' )
-		String hql = "from power where 1=1 and pId Not in(SElECT rpPId FROM rolepower where rpRId='"+rpRId+"' )";
+		String hql = "from Power where 1=1 and pId Not in(select rpPId FROM RolePower where rpRId='"+rpRId+"' )";
 		List<Object> rolepowerTypelist = rolepowerDao.getAllByConds(hql);// 获取所有类型数据，不带分页
 		JSONObject jobj = new JSONObject();
 		if (rolepowerTypelist.size() > 0) {
