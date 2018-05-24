@@ -24,6 +24,8 @@ public class Power implements Serializable{
 	private String pName;
 	//权限地址
 	private String pUrl;
+	//子编号
+	private String pPId;
 	
 	@Id
 	public String getpId() {
@@ -44,20 +46,28 @@ public class Power implements Serializable{
 	public void setpUrl(String pUrl) {
 		this.pUrl = pUrl;
 	}
+	public String getpPId() {
+		return pPId;
+	}
+	public void setpPId(String pPId) {
+		this.pPId = pPId;
+	}
 	@Override
 	public String toString() {
-		return "Power [pId=" + pId + ", pName=" + pName + ", pUrl=" + pUrl + "]";
+		return "Power [pId=" + pId + ", pName=" + pName + ", pUrl=" + pUrl + ", pPId=" + pPId + "]";
 	}
-	public Power(String pId, String pName, String pUrl) {
+	public Power(String pId, String pName, String pUrl, String pPId) {
 		super();
 		this.pId = pId;
 		this.pName = pName;
 		this.pUrl = pUrl;
+		this.pPId = pPId;
 	}
 	public Power() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	
 	
 	

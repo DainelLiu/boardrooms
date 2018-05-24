@@ -49,6 +49,7 @@ public class PowerAction {
 		
 		String pName = ServletActionContext.getRequest().getParameter("pName");
 		String pUrl = ServletActionContext.getRequest().getParameter("pUrl");
+		String pPId = ServletActionContext.getRequest().getParameter("pPId");
 		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
 		Date day=new Date();
 		String hql ="from Power ORDER BY pId DESC";
@@ -74,6 +75,12 @@ public class PowerAction {
 		}
 		power.setpName(pName);
 		power.setpUrl(pUrl);
+		if(pPId != null && !"".equals(pPId)){
+			power.setpPId(pPId);
+		}else{
+			power.setpPId("0");
+		}
+		
 		
 		JSONObject jobj = new JSONObject();
 		
@@ -213,6 +220,56 @@ public class PowerAction {
 	public String listAll() throws IOException{
 
 		List<Object> powerTypelist = powerDao.list();//获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if(powerTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(powerTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	
+	@Action(value="listAllByFatherPower")
+	public String listAllByFatherPower() throws IOException{
+
+		Power power = new Power();
+		power.setpPId("0");
+		power.setpName("父菜单");
+		power.setpUrl("0");
+		power.setpPId("0");
+		String hql = "from Power where 1=1 and pPId = '0' ";
+		List<Object> powerTypelist = powerDao.getAllByConds(hql);//获取所有类型数据，不带分页
+		powerTypelist.add(power);
+		JSONObject jobj = new JSONObject();
+		if(powerTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(powerTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value="listAllByFatherPId")
+	public String listAllByFatherPId() throws IOException{
+
+		String pPId = ServletActionContext.getRequest().getParameter("pPId");
+		String hql = "from Power where 1=1 and pPId = '"+pPId+"' ";
+		List<Object> powerTypelist = powerDao.getAllByConds(hql);//获取所有类型数据，不带分页
 		JSONObject jobj = new JSONObject();
 		if(powerTypelist.size() > 0){
 			//save success
