@@ -15,13 +15,73 @@
     <div id="tb" style="height:auto">
         <a href="javascript:void(0)" id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
            onclick="addRemark()">新增</a>
-       <!--  <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
-           onclick="removeit()">删除</a> -->
+         <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
+           onclick="removeit()">删除</a>
         <a href="javascript:void(0)" id="saveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:false"
            onclick="acceptRow()">保存</a>
         <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:false"
            onclick="cancelrow()">撤回</a>
     </div>
+</div>
+<div id="role-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-info'" style="width:600px;padding:10px;left:100px !important;top:100px !important;">
+    <table id="role-dg"></table>
+    <div id="role-tb" style="height:auto">
+        <a href="javascript:void(0)" id="addBtn1" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
+           onclick="addRemark1()">新增</a>
+        <a href="javascript:void(0)" id="updateBtn1" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:false"
+           onclick="openEdit()">修改</a>
+        <a href="javascript:void(0)" id="delBtn1" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
+           onclick="removeit1()">删除</a>
+    </div>
+</div>
+<div id="role-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-info'" style="width:600px;padding:10px;left:200px !important;top:200px !important;">
+    <form id="ff">
+        <table cellpadding="5">
+            <tr>
+                <td>角色名称:</td>
+                <td>
+                    <input class="easyui-textbox" name="roleName" id="roleName" value="" style="width:200px;height:35px;" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>选择权限:</td>
+                <td>
+                    <select name="power" id="power-choose" style="width:200px;height:35px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="button" value="添加" onclick="addPower()">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="role-dialog-4" class="easyui-dialog" data-options="closed:true,iconCls:'icon-info'" style="width:600px;padding:10px;left:200px !important;top:200px !important;">
+    <form id="ff1">
+        <table cellpadding="5">
+            <tr>
+                <td>角色名称:</td>
+                <td>
+                    <input class="easyui-textbox" name="roleName1" id="roleName1" value="" style="width:200px;height:35px;" readonly>
+                    <input id="rpId" type="hidden">
+                </td>
+            </tr>
+            <tr>
+                <td>选择权限:</td>
+                <td>
+                    <select name="power" id="power-choose1" style="width:200px;height:35px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="button" value="保存修改" onclick="updatePower()">
+                </td>
+            </tr>
+        </table>
+    </form>
 </div>
 
 <script type="text/javascript" src="lib/jquery.min.js"></script>
@@ -30,6 +90,8 @@
 <script type="text/javascript" src="lib/datagrid-detailview.js"></script>
 <script type="text/javascript" src="lib/custom/pageFilter.js"></script>
 <script type="text/javascript">
+    var _chooseRId;
+    var _chooseName;
     $(function(){
         $('#dg').datagrid({
             title:'角色列表',
@@ -119,7 +181,15 @@
     			console.log(data);
     			if(data.status == 'success'){
    					var rows = [];
-       				rows = data.data;
+       				for(var k = 0; k < data.data.length; k++){
+       				    var item = data.data[k];
+       				    var obj = {
+       				        rId:item.rId,
+                            rName:item.rName,
+                            options:item.rId+','+item.rName
+                        }
+                        rows.push(obj);
+                    }
        				$('#dg').datagrid('loadData', rows);
     			}else{
     				//没有数据或服务器错误
@@ -247,7 +317,7 @@
             console.log(row);
             //发ajax请求后台
           //发ajax请求后台
-            if(row.bId == '' || row.bId == null){
+            if(row.rId == '' || row.rId == null){
             	$.ajax({
         			type:"post",
         			async:true,
@@ -298,9 +368,197 @@
             getData();
         }
     }
+    // 获取全新下拉框
+    function getPowerChoose(){
+        $.ajax({
+            type:"post",
+            async:false,
+            url:"./rolepower/searchByNotPId.action",
+            dataType:"json",
+            data:{
+                rpRId:_chooseRId
+            },
+            success:function(data){
+                if(data.status == 'success'){
+                    var html = '';
+                    for(var i = 0; i <data.data.length; i++){
+                        var item = data.data[i];
+                        if(i == 0){
+                            html += '<option value="'+item.pId+'" selected>'+item.pName+'</option>';
+                        }else{
+                            html += '<option value="'+item.pId+'">'+item.pName+'</option>';
+                        }
+                    }
+                    $('#power-choose').empty().append(html);
+                    $('#power-choose1').empty().append(html);
+                }else{
+                    alert(data.mes);
+                }
+            }
+        });
+    }
 
-    function roleToPower(){
-
+    function addRemark1(){
+        $('#role-dialog-3').dialog({
+            width:800,
+            closed: false,
+            modal:true,
+            title: "添加权限",
+            buttons: []
+        });
+    }
+    function openEdit(){
+        var row = $('#dg').datagrid('getSelected');
+        $('#rpId').val(row.rpId);
+        $('#power-choose1').val(row.pId);
+        $('#role-dialog-4').dialog({
+            width:800,
+            closed: false,
+            modal:true,
+            title: "修改权限",
+            buttons: []
+        });
+    }
+    // 删除
+    function removeit1(){
+        $.messager.defaults = {ok: '确定', cancel: '取消', width: '200px'};
+        var row = $('#role-dg').datagrid('getSelected');
+        if(row){
+            $.messager.confirm('操作提示','确认删除?',function(r){
+                if (r){
+                    var rindex = $('#role-dg').datagrid('getRowIndex', row);
+                    //alert(rindex);
+                    $('#role-dg').datagrid('deleteRow', rindex);
+                    $.ajax({
+                        type:"post",
+                        async:true,
+                        url:"./rolepower/delete.action",
+                        dataType:"json",
+                        data:{
+                            rId:row.rId
+                        },
+                        success:function(data){
+                            if(data.status == 'success'){
+                                roleToPower();
+                            }else{
+                                alert(data.mes);
+                            }
+                        }
+                    });
+                }else{
+                    $('#role-dg').datagrid('clearSelections');
+                }
+            });
+        }else{
+            $.messager.alert("操作提示", "请至少选中一行!","error",function () {});
+        }
+//        $('#addBtn').linkbutton('enable');
+//        $('#delBtn').linkbutton('disable');
+//        $('#saveBtn').linkbutton('disable');
+//        $('#rejectBtn').linkbutton('disable');
+    }
+    // 保存方法（添加修改用了一个方法accept()）
+    function addPower() {
+        $.ajax({
+            type: "post",
+            async: true,
+            url: "./rolepower/save.action",
+            dataType: "json",
+            data: {
+                rpRId: _chooseRId,
+                rpPId:$('#power-choose').val()
+            },
+            success: function (data) {
+                if (data.status == 'success') {
+                    $('#role-dialog-3').dialog('close');
+                    roleToPower();
+                } else {
+                    alert(data.mes);
+                }
+            }
+        });
+    }
+    function updatePower(){
+        $.ajax({
+            type:"post",
+            async:true,
+            url:"./rolepower/update.action",
+            dataType:"json",
+            data:{
+                rpId:$('#rpId').val(),
+                rpRId: _chooseRId,
+                rpPId:$('#power-choose1').val()
+            },
+            success:function(data){
+                if(data.status == 'success'){
+                    roleToPower();
+                }else{
+                    alert(data.mes);
+                }
+            }
+        });
+    }
+    function roleToPower(obj){
+        _chooseRId = obj.split(',')[0];
+        _chooseName = obj.split(',')[1];
+        getPowerChoose();
+        $('#roleName').textbox('setValue',_chooseName);
+        $('#roleName1').textbox('setValue',_chooseName);
+        $('#role-dg').datagrid({
+            /*title:'权限列表',*/
+            rownumbers:false,
+            singleSelect:true,
+            autoRowHeight:false,
+            pagination:false,
+            fitColumns:true,
+            striped:true,
+            checkOnSelect:true,
+            selectOnCheck:true,
+            collapsible:false,
+            toolbar:'#role-tb',
+            /* data:getData(), */
+            columns:[[
+                {field:'ck',checkbox:true,width:'5%'},
+                {field:'rpId',title:'',width:0,hidden:true},
+                {field:'pId',title:'权限编号',width:'15%',align:'center'},
+                {field:'pName',title:'权限名称',width:'80%',align:'center'},
+            ]],
+        });
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./rolepower/searchByrpRId.action",
+            dataType:"json",
+            data:{
+                rpRId:_chooseRId
+            },
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    var list = data.data;
+                    var trueRow = [];
+                    for(var i = 0 ; i < list.length ; i++){
+                        var item = list[i];
+                        var obj = {
+                            rpId:item.rpId,
+                            pId:item.rpPId.pId,
+                            pName:item.rpPId.pName
+                        }
+                        trueRow.push(obj);
+                    }
+                    $('#dg1').datagrid('loadData', trueRow);
+                }else{
+                    $('#dg1').datagrid('loadData', []);
+                }
+                $('#role-dialog-2').dialog({
+                    width:800,
+                    closed: false,
+                    modal:true,
+                    title: "权限信息",
+                    buttons: []
+                });
+            }
+        });
     }
 
 </script>

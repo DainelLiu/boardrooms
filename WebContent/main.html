@@ -113,13 +113,6 @@
                          <li><a href="javascript:void(0);" onclick="toPage('预订情况','reserve.html',this);">预订情况</a></li>
                      </ul>
                 </li>
-                 <li class="firstMenu" id="role" style="display:none;">
-                    <a href="javascript:void(0);" onclick="toPage('角色管理','role.html',this);">
-                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
-                        <span class="sider-nav-title">角色列表</span>
-                        <i class="iconfont">&#xe642;</i>
-                    </a>
-                </li>
                  <li class="firstMenu" id="roomcount" style="display:none;">
                     <a href="javascript:void(0);" onclick="toPage('信息统计','dealcount.html',this);">
                         <span class="iconfont sider-nav-icon">&#xe60d;</span>
@@ -137,6 +130,20 @@
                         <li><a href="javascript:void(0);" onclick="toPage('我的预定','myDeal.html',this);">我的预定</a></li>
                         <li><a href="javascript:void(0);" onclick="toPage('个人资料','infos.html',this);">个人资料</a></li>
                     </ul>
+                </li>
+                <li class="firstMenu" id="role" style="display:none;">
+                    <a href="javascript:void(0);" onclick="toPage('角色管理','role.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">角色列表</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
+                </li>
+                <li class="firstMenu" id="power" style="display:none;">
+                    <a href="javascript:void(0);" onclick="toPage('权限管理','power.html',this);">
+                        <span class="iconfont sider-nav-icon">&#xe60d;</span>
+                        <span class="sider-nav-title">权限列表</span>
+                        <i class="iconfont">&#xe642;</i>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -208,10 +215,11 @@
 			$('#users').show();
 			$('#message').show();
 			$('#dealroom').show();
-			/* $('#role').show(); */
 			$('#roomcount').show();
             $('#ucenter').show();
-		}
+            $('#role').show();
+            $('#power').show();
+        }
 	})
     $('.easyui-tabs1').tabs({
         tabHeight: 44,

@@ -15,8 +15,8 @@
     <div id="tb" style="height:auto">
         <a href="javascript:void(0)" id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
            onclick="addRemark()">新增</a>
-       <!--  <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
-           onclick="removeit()">删除</a> -->
+         <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
+           onclick="removeit()">删除</a>
         <a href="javascript:void(0)" id="saveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:false"
            onclick="acceptRow()">保存</a>
         <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:false"
@@ -49,9 +49,9 @@
             /* data:getData(), */
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
-                {field:'rId',title:'权限编号',width:'25%',align:'center',sortable:true},
-                {field:'rName',title:'权限名称',width:'35%',align:'center',editor:'text'},
-                {field:'rName',title:'路径配置',width:'35%',align:'center',editor:'text'},
+                {field:'pId',title:'权限编号',width:'25%',align:'center',sortable:true},
+                {field:'pName',title:'权限名称',width:'35%',align:'center',editor:'text'},
+                {field:'pUrl',title:'路径配置',width:'35%',align:'center',editor:'text'},
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -108,7 +108,7 @@
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./role/list.action",
+    		url:"./power/listAll.action",
     		dataType:"json",
     		data:{},
     		success:function(data){
@@ -166,7 +166,7 @@
             if (endEditing()){
                 $('#dg').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'rName'});
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'pName'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
@@ -189,7 +189,7 @@
             });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
             $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'rName'});
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'pName'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
         }
     }
@@ -206,10 +206,10 @@
                     $.ajax({
             			type:"post",
             			async:true,
-            			url:"./role/delete.action",
+            			url:"./power/delete.action",
             			dataType:"json",
             			data:{
-            				rId:row.rId
+                            pId:row.pId
             			},
             			success:function(data){
             				if(data.status == 'success'){
@@ -243,14 +243,15 @@
             console.log(row);
             //发ajax请求后台
           //发ajax请求后台
-            if(row.bId == '' || row.bId == null){
+            if(row.pId == '' || row.pId == null){
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./role/save.action",
+        			url:"./power/save.action",
         			dataType:"json",
         			data:{
-        				rName:row.rName
+        				pName:row.pName,
+                        pUrl:row.pUrl
         			},
         			success:function(data){
         				if(data.status == 'success'){
@@ -264,11 +265,12 @@
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./role/update.action",
+        			url:"./power/update.action",
         			dataType:"json",
         			data:{
-        				rId:row.rId,
-        				rName:row.rName
+                        pId:row.pId,
+                        pName:row.pName,
+                        pUrl:row.pUrl
         			},
         			success:function(data){
         				if(data.status == 'success'){
