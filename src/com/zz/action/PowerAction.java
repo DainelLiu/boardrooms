@@ -246,10 +246,15 @@ public class PowerAction {
 		power.setpUrl("0");
 		power.setpPId("0");
 		String hql = "from Power where 1=1 and pPId = '0' ";
-		List<Object> powerTypelist = powerDao.getAllByConds(hql);//获取所有类型数据，不带分页
+		List<Object> powerlist = powerDao.getAllByConds(hql);//获取所有类型数据，不带分页
+		List<Object> powerTypelist =  new ArrayList<Object >(); 
 		powerTypelist.add(power);
+		powerTypelist.add(powerlist);
 		JSONObject jobj = new JSONObject();
-		if(powerTypelist.size() > 0){
+		if(powerlist.size() > 0){
+			/*for(int i=0;i<powerlist.size();i++){
+				powerTypelist.add(powerlist));
+			}*/
 			//save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
