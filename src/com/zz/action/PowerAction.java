@@ -241,7 +241,7 @@ public class PowerAction {
 	public String listAllByFatherPower() throws IOException{
 
 		Power power = new Power();
-		power.setpPId("0");
+		power.setpId("0");
 		power.setpName("父菜单");
 		power.setpUrl("0");
 		power.setpPId("0");
