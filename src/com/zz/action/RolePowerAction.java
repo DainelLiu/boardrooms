@@ -254,5 +254,69 @@ public class RolePowerAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	
+	@Action(value = "searchByrpPId")
+	public String searchByrpPId() throws IOException {
+		String rpPId = ServletActionContext.getRequest().getParameter("rpPId");
+		String hql = "from RolePower where 1=1 and rpPId = '" + rpPId +"'";
+		List<Object> rolepowerTypelist = rolepowerDao.getAllByConds(hql);// 获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if (rolepowerTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(rolepowerTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value = "searchByrpRId")
+	public String searchByrpRId() throws IOException {
+		String rpRId = ServletActionContext.getRequest().getParameter("rpRId");
+		String hql = "from RolePower where 1=1 and rpRId = '" + rpRId +"'";
+		List<Object> rolepowerTypelist = rolepowerDao.getAllByConds(hql);// 获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if (rolepowerTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(rolepowerTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
+	@Action(value = "searchByuId")
+	public String searchByuId() throws IOException {
+		String uId = ServletActionContext.getRequest().getParameter("uId");
+		//SELECT  * from rolepower where 1=1 and rpRId IN (SELECT uRId FROM users where uId ='60284706635a2fc601635a30e9a31100')
+		String hql = "from rolepower where 1=1 and rpRId IN (SELECT uRId FROM users where uId ='" + uId +"')";
+		List<Object> rolepowerTypelist = rolepowerDao.getAllByConds(hql);// 获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if (rolepowerTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(rolepowerTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 
 }
