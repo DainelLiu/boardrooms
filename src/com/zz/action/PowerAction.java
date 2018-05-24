@@ -249,12 +249,11 @@ public class PowerAction {
 		List<Object> powerlist = powerDao.getAllByConds(hql);//获取所有类型数据，不带分页
 		List<Object> powerTypelist =  new ArrayList<Object >(); 
 		powerTypelist.add(power);
-		powerTypelist.add(powerlist);
 		JSONObject jobj = new JSONObject();
 		if(powerlist.size() > 0){
-			/*for(int i=0;i<powerlist.size();i++){
-				powerTypelist.add(powerlist));
-			}*/
+			for(int i=0;i<powerlist.size();i++){
+				powerTypelist.add(powerlist.get(i));
+			}
 			//save success
 			jobj.put("mes", "获取成功!");
 			jobj.put("status", "success");
