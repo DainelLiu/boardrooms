@@ -30,7 +30,25 @@
 <script type="text/javascript" src="lib/datagrid-detailview.js"></script>
 <script type="text/javascript" src="lib/custom/pageFilter.js"></script>
 <script type="text/javascript">
+    var fuMenu = [];
+    var menu_choose;
     $(function(){
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./power/listAllByFatherPower.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    fuMenu = data.data;
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
+        console.log(fuMenu);
         $('#dg').datagrid({
             title:'权限列表',
             width:'auto',
@@ -50,8 +68,14 @@
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
                 {field:'pId',title:'权限编号',width:'25%',align:'center',sortable:true},
-                {field:'pName',title:'权限名称',width:'35%',align:'center',editor:'text'},
-                {field:'pUrl',title:'路径配置',width:'35%',align:'center',editor:'text'},
+                {field:'pName',title:'权限名称',width:'25%',align:'center',editor:'text'},
+                {field:'pUrl',title:'路径配置',width:'25%',align:'center',editor:'text'},
+                {field:'pPId',title:'父菜单',width:'20%',align:'center',editor:{type:'combobox',options:{valueField:'pId',textField:'pName',data:fuMenu,onSelect:function(data){
+                                var row = $('#dg').datagrid('getSelected');
+                                var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                                var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'pPId'}).target;
+                                menu_choose = thisTarget.combobox('getValue');
+                            }}}},
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -115,7 +139,17 @@
     			console.log(data);
     			if(data.status == 'success'){
    					var rows = [];
-       				rows = data.data;
+       				var list = data.data;
+                    for(var i = 0 ; i < list.length ; i++){
+                        var item = list[i];
+                        var obj = {
+                            pId:item.pId,
+                            pName:item.pName,
+                            pUrl:item.pUrl,
+                            pPId:item.pPId == '0' ? '父菜单' : '子菜单'
+                        }
+                        rows.push(obj);
+                    }
        				$('#dg').datagrid('loadData', rows);
     			}else{
     				//没有数据或服务器错误
@@ -180,18 +214,33 @@
 //        $('#delBtn').linkbutton('enable');
 //        $('#saveBtn').linkbutton('enable');
 //        $('#rejectBtn').linkbutton('enable');
-        if (endEditing()){
-            editIndex = 0;
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./power/listAllByFatherPower.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    fuMenu = data.data;
+                    if (endEditing()){
+                        editIndex = 0;
 //            $('#dg').datagrid('insertRow',{'pid':'pid-'});
-            $('#dg').datagrid('insertRow',{
-                index: editIndex,  // 索引从0开始
-                row: {'ck': true}
-            });
+                        $('#dg').datagrid('insertRow',{
+                            index: editIndex,  // 索引从0开始
+                            row: {'ck': true}
+                        });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
-            $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'pName'});
-            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
-        }
+                        $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+                        var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'pName'});
+                        ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                    }
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
     }
     // 删除
     function removeit(){
@@ -251,7 +300,8 @@
         			dataType:"json",
         			data:{
         				pName:row.pName,
-                        pUrl:row.pUrl
+                        pUrl:row.pUrl,
+                        pPId:menu_choose
         			},
         			success:function(data){
         				if(data.status == 'success'){
@@ -270,7 +320,8 @@
         			data:{
                         pId:row.pId,
                         pName:row.pName,
-                        pUrl:row.pUrl
+                        pUrl:row.pUrl,
+                        pPId:menu_choose
         			},
         			success:function(data){
         				if(data.status == 'success'){
