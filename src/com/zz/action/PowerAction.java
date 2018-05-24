@@ -52,20 +52,22 @@ public class PowerAction {
 		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
 		Date day=new Date();
 		String hql ="from Power ORDER BY pId DESC";
-		List<Object> powerTypelist = powerDao.getAllByConds(hql);
-		String pId = ((Power) powerTypelist.get(0)).getpId();
-		
-		
 		Power power = new Power();
-		boolean sign=(pId.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(pId.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				power.setpId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(pId.substring(8))<=10 && Integer.parseInt(pId.substring(8))<100){
-				power.setpId(df.format(day)+"0"+(Integer.toString(num)));
+		List<Object> powerTypelist = powerDao.getAllByConds(hql);
+		if(powerTypelist.size() != 0){
+			String pId = ((Power) powerTypelist.get(0)).getpId();
+			boolean sign=(pId.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(pId.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					power.setpId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(pId.substring(8))<=10 && Integer.parseInt(pId.substring(8))<100){
+					power.setpId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					power.setpId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				power.setpId(df.format(day)+(Integer.toString(num)));
+				power.setpId(df.format(day)+"001");
 			}
 		}else{
 			power.setpId(df.format(day)+"001");
