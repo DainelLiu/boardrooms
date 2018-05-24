@@ -15,7 +15,11 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.context.annotation.Scope;
 
+import com.zz.dao.IPowerDao;
+import com.zz.dao.IRoleDao;
 import com.zz.dao.IRolePowerDao;
+import com.zz.model.Power;
+import com.zz.model.Role;
 import com.zz.model.RolePower;
 import com.zz.util.JsonUtil;
 import com.zz.util.PageBean;
@@ -37,6 +41,26 @@ public class RolePowerAction {
 	@Resource(name = "RolePowerDao")
 	public void setRolePowerDao(IRolePowerDao rolepowerDao) {
 		this.rolepowerDao = rolepowerDao;
+	}
+	
+	private IRoleDao roleDao;
+	
+	public IRoleDao getRoleDao() {
+		return roleDao;
+	}
+	@Resource(name="RoleDao")
+	public void setRoleDao(IRoleDao roleDao) {
+		this.roleDao = roleDao;
+	}
+	
+	private IPowerDao powerDao;
+	
+	public IPowerDao getPowerDao() {
+		return powerDao;
+	}
+	@Resource(name="PowerDao")
+	public void setPowerDao(IPowerDao powerDao) {
+		this.powerDao = powerDao;
 	}
 
 	/**
@@ -74,9 +98,10 @@ public class RolePowerAction {
 		}else{
 			rolepower.setrpId(df.format(day)+"001");
 		}
-		
-		rolepower.setrpRId(rpRId);
-		rolepower.setrpPId(rpPId);
+		Role role = roleDao.getById(rpRId);
+		Power power = powerDao.getById(rpPId);
+		rolepower.setrpRId(role);
+		rolepower.setrpPId(power);
 		
 
 		JSONObject jobj = new JSONObject();
@@ -130,12 +155,14 @@ public class RolePowerAction {
 		String rpId = ServletActionContext.getRequest().getParameter("rpId");
 		String rpRId = ServletActionContext.getRequest().getParameter("rpRId");
 		String rpPId = ServletActionContext.getRequest().getParameter("rpPId");
+		Role role = roleDao.getById(rpRId);
+		Power power = powerDao.getById(rpPId);
 		RolePower rolepower = rolepowerDao.getById(rpId);
 		if (rpRId != null && !"".equals(rpRId)) {
-			rolepower.setrpRId(rpRId);
+			rolepower.setrpRId(role);
 		}
 		if (rpPId != null && !"".equals(rpPId)) {
-			rolepower.setrpPId(rpPId);
+			rolepower.setrpPId(power);
 		}
 		JSONObject jobj = new JSONObject();
 

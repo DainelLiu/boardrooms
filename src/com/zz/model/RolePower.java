@@ -2,15 +2,11 @@ package com.zz.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table
@@ -28,10 +24,9 @@ public class RolePower implements Serializable{
 	//角色权限编号
 	private String rpId;
 	//角色权限角色编号
-	private String rpRId;
+	private Role rpRId;
 	//角色权限权限编号
-	private String rpPId;
-	
+	private Power rpPId;
 	@Id
 	public String getrpId() {
 		return rpId;
@@ -39,23 +34,27 @@ public class RolePower implements Serializable{
 	public void setrpId(String rpId) {
 		this.rpId = rpId;
 	}
-	public String getrpRId() {
+	@ManyToOne
+	@JoinColumn(name="rpRId")
+	public Role getrpRId() {
 		return rpRId;
 	}
-	public void setrpRId(String rpRId) {
+	public void setrpRId(Role rpRId) {
 		this.rpRId = rpRId;
 	}
-	public String getrpPId() {
+	@ManyToOne
+	@JoinColumn(name="rpPId")
+	public Power getrpPId() {
 		return rpPId;
 	}
-	public void setrpPId(String rpPId) {
+	public void setrpPId(Power rpPId) {
 		this.rpPId = rpPId;
 	}
 	@Override
 	public String toString() {
 		return "RolePower [rpId=" + rpId + ", rpRId=" + rpRId + ", rpPId=" + rpPId + "]";
 	}
-	public RolePower(String rpId, String rpRId, String rpPId) {
+	public RolePower(String rpId, Role rpRId, Power rpPId) {
 		super();
 		this.rpId = rpId;
 		this.rpRId = rpRId;
@@ -65,6 +64,7 @@ public class RolePower implements Serializable{
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	
 	
 	
