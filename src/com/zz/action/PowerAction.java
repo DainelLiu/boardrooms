@@ -131,6 +131,7 @@ public class PowerAction {
 		String pId = ServletActionContext.getRequest().getParameter("pId");
 		String pName = ServletActionContext.getRequest().getParameter("pName");
 		String pUrl = ServletActionContext.getRequest().getParameter("pUrl");
+		String pPId = ServletActionContext.getRequest().getParameter("pPId");
 		Power power = powerDao.getById(pId);
 		if (pName != null && !"".equals(pName)) {
 			power.setpName(pName);
@@ -138,6 +139,11 @@ public class PowerAction {
 		if (pUrl != null && !"".equals(pUrl)) {
 			power.setpUrl(pUrl);
 		} 
+		if (pPId != null && !"".equals(pPId)) {
+			power.setpPId(pPId);
+		} else{
+			power.setpPId("0");
+		}
 		JSONObject jobj = new JSONObject();
 		
 		if(powerDao.update(power)) {
