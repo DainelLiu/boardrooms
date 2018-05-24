@@ -95,7 +95,7 @@ public class ReserveAction {
 		Date day=new Date();
 		String hql ="from Reserve ORDER BY resId resId";
 		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
-		String resId = ((Reserve) reserveTypelist.get(0)).getResId();
+		
 		
 		
 		Reserve reserve = new Reserve();
@@ -105,17 +105,20 @@ public class ReserveAction {
 		reserve.setResStarttime(resStarttime);
 		reserve.setResSign(1);
 		reserve.setResEndtime(resEndtime);
-		
-		
-		boolean sign=(resId.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(resId.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				reserve.setResId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(resId.substring(8))<=10 && Integer.parseInt(resId.substring(8))<100){
-				reserve.setResId(df.format(day)+"0"+(Integer.toString(num)));
+		if(reserveTypelist.size()!=0){
+			String resId = ((Reserve) reserveTypelist.get(0)).getResId();
+			boolean sign=(resId.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(resId.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					reserve.setResId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(resId.substring(8))<=10 && Integer.parseInt(resId.substring(8))<100){
+					reserve.setResId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					reserve.setResId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				reserve.setResId(df.format(day)+(Integer.toString(num)));
+				reserve.setResId(df.format(day)+"001");
 			}
 		}else{
 			reserve.setResId(df.format(day)+"001");

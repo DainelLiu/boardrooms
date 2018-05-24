@@ -86,7 +86,7 @@ public class UsersAction {
 		Date day=new Date();
 		String hql ="from Users ORDER BY uId DESC";
 		List<Object> usersTypelist = usersDao.getAllByConds(hql);
-		String uId = ((Users) usersTypelist.get(0)).getuId();
+		
 		
 		Users users = new Users();
 		Department department = new Department();
@@ -97,15 +97,20 @@ public class UsersAction {
 		users.setuInformation(uInformation);
 		users.setuDId(departmentDao.getById(uDId));
 		users.setuRId(roleDao.getById(uRId));
-		boolean sign=(uId.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(uId.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				users.setuId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(uId.substring(8))<=10 && Integer.parseInt(uId.substring(8))<100){
-				users.setuId(df.format(day)+"0"+(Integer.toString(num)));
+		if(usersTypelist.size()!=0){
+			String uId = ((Users) usersTypelist.get(0)).getuId();
+			boolean sign=(uId.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(uId.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					users.setuId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(uId.substring(8))<=10 && Integer.parseInt(uId.substring(8))<100){
+					users.setuId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					users.setuId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				users.setuId(df.format(day)+(Integer.toString(num)));
+				users.setuId(df.format(day)+"001");
 			}
 		}else{
 			users.setuId(df.format(day)+"001");

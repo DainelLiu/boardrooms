@@ -55,18 +55,27 @@ public class DepartmentAction {
 		Department department = new Department();
 		String hql ="from Department ORDER BY dId DESC";
 		List<Object> departmentTypelist = departmentDao.getAllByConds(hql);
-		String depId = ((Department) departmentTypelist.get(0)).getdId();
-		//String depId = ((Department) departmentTypelist.get(0)).getdId().substring(8);
-		
-		boolean sign=(depId.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(depId.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				department.setdId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(depId.substring(8))<=10 && Integer.parseInt(depId.substring(8))<100){
-				department.setdId(df.format(day)+"0"+(Integer.toString(num)));
+		if(departmentTypelist.size() != 0){
+			String depId = ((Department) departmentTypelist.get(0)).getdId();
+			//String depId = ((Department) departmentTypelist.get(0)).getdId().substring(8);
+			
+			boolean sign=(depId.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(depId.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					department.setdId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(depId.substring(8))<=10 && Integer.parseInt(depId.substring(8))<100){
+					department.setdId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					department.setdId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				department.setdId(df.format(day)+(Integer.toString(num)));
+				department.setdId(df.format(day)+"001");
+			}
+			if (dNumber != null && !"".equals(dNumber)) {
+				department.setdNumber(Integer.parseInt(dNumber));
+			} else {
+				department.setdNumber(0);
 			}
 		}else{
 			department.setdId(df.format(day)+"001");

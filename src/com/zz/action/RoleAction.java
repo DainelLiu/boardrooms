@@ -53,23 +53,29 @@ public class RoleAction {
 		Date day=new Date();
 		String hql ="from Role ORDER BY rId DESC";
 		List<Object> roleTypelist = roleDao.getAllByConds(hql);
-		String rId = ((Role) roleTypelist.get(0)).getrId();
+		
 		
 		
 		Role role = new Role();
-		boolean sign=(rId.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(rId.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				role.setrId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(rId.substring(8))<=10 && Integer.parseInt(rId.substring(8))<100){
-				role.setrId(df.format(day)+"0"+(Integer.toString(num)));
+		if(roleTypelist.size()!=0){
+			String rId = ((Role) roleTypelist.get(0)).getrId();
+			boolean sign=(rId.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(rId.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					role.setrId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(rId.substring(8))<=10 && Integer.parseInt(rId.substring(8))<100){
+					role.setrId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					role.setrId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				role.setrId(df.format(day)+(Integer.toString(num)));
+				role.setrId(df.format(day)+"001");
 			}
 		}else{
 			role.setrId(df.format(day)+"001");
-		}role.setrName(rName);
+		}
+		role.setrName(rName);
 		
 		
 		JSONObject jobj = new JSONObject();

@@ -54,18 +54,22 @@ public class RolePowerAction {
 		RolePower rolepower = new RolePower();
 		String hql ="from RolePower ORDER BY rpId DESC";
 		List<Object> rolepowerTypelist = rolepowerDao.getAllByConds(hql);
-		String id = ((RolePower) rolepowerTypelist.get(0)).getrpId();
-		//String id = ((RolePower) rolepowerTypelist.get(0)).getrpId().substring(8);
-		
-		boolean sign=(id.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(id.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				rolepower.setrpId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(id.substring(8))<=10 && Integer.parseInt(id.substring(8))<100){
-				rolepower.setrpId(df.format(day)+"0"+(Integer.toString(num)));
+		if(rolepowerTypelist.size()!=0){
+			String id = ((RolePower) rolepowerTypelist.get(0)).getrpId();
+			//String id = ((RolePower) rolepowerTypelist.get(0)).getrpId().substring(8);
+			
+			boolean sign=(id.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(id.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					rolepower.setrpId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(id.substring(8))<=10 && Integer.parseInt(id.substring(8))<100){
+					rolepower.setrpId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					rolepower.setrpId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				rolepower.setrpId(df.format(day)+(Integer.toString(num)));
+				rolepower.setrpId(df.format(day)+"001");
 			}
 		}else{
 			rolepower.setrpId(df.format(day)+"001");

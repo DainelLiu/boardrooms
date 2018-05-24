@@ -81,20 +81,25 @@ public class MessageAction {
 		Date day=new Date();
 		String hql ="from Message ORDER BY mId DESC";
 		List<Object> messageTypelist = messageDao.getAllByConds(hql);
-		String mId = ((Message) messageTypelist.get(0)).getmId();
+		
 		Message message = new Message();
 		message.setmBId(boardroomDao.getById(mBId));
 		message.setmUId(usersDao.getById(mUId));
 		message.setmDescribe(mDescribe);
-		boolean sign=(mId.substring(0,8)).equals(df.format(day));
-		int num = ((Integer.parseInt(mId.substring(8)))+1);
-		if(sign){
-			if(num<10){
-				message.setmId(df.format(day)+"00"+(Integer.toString(num)));
-			}else if(Integer.parseInt(mId.substring(8))<=10 && Integer.parseInt(mId.substring(8))<100){
-				message.setmId(df.format(day)+"0"+(Integer.toString(num)));
+		if(messageTypelist.size() != 0){
+			String mId = ((Message) messageTypelist.get(0)).getmId();
+			boolean sign=(mId.substring(0,8)).equals(df.format(day));
+			int num = ((Integer.parseInt(mId.substring(8)))+1);
+			if(sign){
+				if(num<10){
+					message.setmId(df.format(day)+"00"+(Integer.toString(num)));
+				}else if(Integer.parseInt(mId.substring(8))<=10 && Integer.parseInt(mId.substring(8))<100){
+					message.setmId(df.format(day)+"0"+(Integer.toString(num)));
+				}else{
+					message.setmId(df.format(day)+(Integer.toString(num)));
+				}
 			}else{
-				message.setmId(df.format(day)+(Integer.toString(num)));
+				message.setmId(df.format(day)+"001");
 			}
 		}else{
 			message.setmId(df.format(day)+"001");
