@@ -318,5 +318,27 @@ public class RolePowerAction {
 		ServletActionContext.getResponse().getWriter().write(jobj.toString());
 		return null;
 	}
+	
+	@Action(value = "searchByNotPId")
+	public String searchByNotPId() throws IOException {
+		String rpRId = ServletActionContext.getRequest().getParameter("rpRId");
+		//from power where 1=1 and pId Not in(SElect rpPId FROM rolepower where rpRId='40284706635ed7e601635ee4fd110006' )
+		String hql = "from power where 1=1 and pId Not in(SElECT rpPId FROM rolepower where rpRId='"+rpRId+"' )";
+		List<Object> rolepowerTypelist = rolepowerDao.getAllByConds(hql);// 获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if (rolepowerTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(rolepowerTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
 
 }
