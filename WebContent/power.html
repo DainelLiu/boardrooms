@@ -128,6 +128,7 @@
         }).datagrid('clientPaging');
     });
     function getData(){
+        fuMenu = [];
     	//获取用户列表
         $.ajax({
     		type:"get",
@@ -150,7 +151,22 @@
                         }
                         rows.push(obj);
                     }
-       				$('#dg').datagrid('loadData', rows);
+                    $.ajax({
+                        type:"get",
+                        async:false,
+                        url:"./power/listAllByFatherPower.action",
+                        dataType:"json",
+                        data:{},
+                        success:function(data){
+                            console.log(data);
+                            if(data.status == 'success'){
+                                fuMenu = data.data;
+                                $('#dg').datagrid('loadData', rows);
+                            }else{
+                                //没有数据或服务器错误
+                            }
+                        }
+                    });
     			}else{
     				//没有数据或服务器错误
     			}
@@ -210,37 +226,23 @@
     }
     // 添加
     function addRemark(){
+        fuMenu = [];
 //        $('#addBtn').linkbutton('disable');
 //        $('#delBtn').linkbutton('enable');
 //        $('#saveBtn').linkbutton('enable');
 //        $('#rejectBtn').linkbutton('enable');
-        $.ajax({
-            type:"get",
-            async:false,
-            url:"./power/listAllByFatherPower.action",
-            dataType:"json",
-            data:{},
-            success:function(data){
-                console.log(data);
-                if(data.status == 'success'){
-                    fuMenu = data.data;
-                    if (endEditing()){
-                        editIndex = 0;
+        if (endEditing()){
+            editIndex = 0;
 //            $('#dg').datagrid('insertRow',{'pid':'pid-'});
-                        $('#dg').datagrid('insertRow',{
-                            index: editIndex,  // 索引从0开始
-                            row: {'ck': true}
-                        });
+            $('#dg').datagrid('insertRow',{
+                index: editIndex,  // 索引从0开始
+                row: {'ck': true}
+            });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
-                        $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-                        var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'pName'});
-                        ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
-                    }
-                }else{
-                    //没有数据或服务器错误
-                }
-            }
-        });
+            $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'pName'});
+            ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+        }
     }
     // 删除
     function removeit(){
