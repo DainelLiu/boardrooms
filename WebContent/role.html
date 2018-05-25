@@ -46,7 +46,7 @@
             <tr>
                 <td>选择权限:</td>
                 <td>
-                    <select name="power" id="power-choose" style="width:200px;height:35px;"></select>
+                    <select id="power-choose" style="width:200px;height:35px;"></select>
                 </td>
             </tr>
             <tr>
@@ -71,7 +71,7 @@
             <tr>
                 <td>选择权限:</td>
                 <td>
-                    <select name="power" id="power-choose1" style="width:200px;height:35px;"></select>
+                    <select id="power-choose1" style="width:200px;height:35px;"></select>
                 </td>
             </tr>
             <tr>
@@ -391,8 +391,13 @@
                     }
                     $('#power-choose').empty().append(html);
                     $('#power-choose1').empty().append(html);
+                    $('#addBtn1').attr('href','javascript:void(0)');
+                    $('#addBtn1').attr('onclick','addRemark1()');
                 }else{
-                    alert(data.mes);
+                    //alert(data.mes);
+                    $('#addBtn1').removeAttr('href');
+                    $('#addBtn1').removeAttr('onclick');
+                    alert('权限已满，无法添加');
                 }
             }
         });
@@ -408,7 +413,7 @@
         });
     }
     function openEdit(){
-        var row = $('#dg').datagrid('getSelected');
+        var row = $('#role-dg').datagrid('getSelected');
         $('#rpId').val(row.rpId);
         $('#power-choose1').val(row.pId);
         $('#role-dialog-4').dialog({
@@ -435,7 +440,7 @@
                         url:"./rolepower/delete.action",
                         dataType:"json",
                         data:{
-                            rId:row.rId
+                            rpId:row.rpId
                         },
                         success:function(data){
                             if(data.status == 'success'){
@@ -491,6 +496,7 @@
             },
             success:function(data){
                 if(data.status == 'success'){
+                    $('#role-dialog-4').dialog('close');
                     roleToPower();
                 }else{
                     alert(data.mes);
@@ -499,8 +505,10 @@
         });
     }
     function roleToPower(obj){
-        _chooseRId = obj.split(',')[0];
-        _chooseName = obj.split(',')[1];
+        if(obj){
+            _chooseRId = obj.split(',')[0];
+            _chooseName = obj.split(',')[1];
+        }
         getPowerChoose();
         $('#roleName').textbox('setValue',_chooseName);
         $('#roleName1').textbox('setValue',_chooseName);
@@ -546,9 +554,9 @@
                         }
                         trueRow.push(obj);
                     }
-                    $('#dg1').datagrid('loadData', trueRow);
+                    $('#role-dg').datagrid('loadData', trueRow);
                 }else{
-                    $('#dg1').datagrid('loadData', []);
+                    $('#role-dg').datagrid('loadData', []);
                 }
                 $('#role-dialog-2').dialog({
                     width:800,

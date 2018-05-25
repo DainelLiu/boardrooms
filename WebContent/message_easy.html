@@ -12,17 +12,6 @@
 
     <table id="dg"></table>
 
-    <div id="tb" style="height:auto">
-        <a href="javascript:void(0)" id="addBtn" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
-           onclick="addRemark()">新增</a>
-        <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
-           onclick="removeit()">删除</a>
-        <a href="javascript:void(0)" id="saveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:false"
-           onclick="acceptRow()">保存</a>
-        <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:false"
-           onclick="cancelrow()">撤回</a>
-    </div>
-    
     <div id="tb1" style="height:auto">
         <a href="javascript:void(0)" id="addBtn1" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false"
            onclick="addRemark()">新增</a>
@@ -55,7 +44,7 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
             checkOnSelect:true,
             selectOnCheck:true,
             collapsible:false,
-            toolbar:'#tb',
+            toolbar:'#tb1',
             pageSize:10,
             /* data:getData(), */
             columns:[[
