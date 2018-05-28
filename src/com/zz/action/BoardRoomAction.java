@@ -333,5 +333,26 @@ resEndtime >= '2013-01-01 11:30:00' and resEndtime <= '2013-01-01 12:30:00'
 		return null;
 	}
 	
+	
+	@Action(value="listBySign")
+	public String listBySign() throws IOException{
+		String hql="from BoardRoom where 1=1 and bSign = 1";
+		List<Object> boardroomTypelist = boardroomDao.getAllByConds(hql);//获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if(boardroomTypelist.size() > 0){
+			//save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(boardroomTypelist));
+		}else{
+			//save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+	
 
 }

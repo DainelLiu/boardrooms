@@ -91,14 +91,16 @@ public class ReserveAction {
 		String resUId = ServletActionContext.getRequest().getParameter("resUId");
 		String resStarttime = ServletActionContext.getRequest().getParameter("resStarttime");
 		String resEndtime = ServletActionContext.getRequest().getParameter("resEndtime");
+		Reserve reserve = new Reserve();
 		SimpleDateFormat df=new SimpleDateFormat("yyyyMMdd");
+		
 		Date day=new Date();
-		String hql ="from Reserve ORDER BY resId resId";
+		String hql ="from Reserve ORDER BY resId DESC";
 		List<Object> reserveTypelist = reserveDao.getAllByConds(hql);
 		
 		
 		
-		Reserve reserve = new Reserve();
+		
 		reserve.setResBId(boardroomDao.getById(resBId));
 		reserve.setResDId(departmentDao.getById(resDId));
 		reserve.setResUId(usersDao.getById(resUId));
