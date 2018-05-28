@@ -273,7 +273,7 @@ public class MessageAction {
 	public String listAllByUsers() throws IOException {
 		
 		String uId = ServletActionContext.getRequest().getParameter("uId");
-		String hql="message where 1=1 and mUId ='"+uId+"'";
+		String hql="from Message where 1=1 and mUId ='"+uId+"'";
 		List<Object> messageTypelist = messageDao.getAllByConds(hql);
 		JSONObject jobj = new JSONObject();
 		if (messageTypelist.size() > 0) {
