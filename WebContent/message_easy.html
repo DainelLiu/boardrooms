@@ -30,7 +30,24 @@
 <script type="text/javascript" src="lib/custom/util.js"></script>
 <script type="text/javascript">
 var loginUser = JSON.parse(Util.getSession("loginUser"));
+var bId_choose;
     $(function(){
+        var bRows = [];
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./boardroom/listBySign.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    bRows = data.data;
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
         $('#dg').datagrid({
             title:'留言列表',
             width:'auto',
@@ -50,11 +67,16 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
                 {field:'mId',title:'留言编号',width:'25%',align:'center',sortable:true},
-                {field:'mBId',title:'会议室名称',width:'15%',align:'center',editor:'text'},
-                {field:'mUId',title:'用户名称',width:'10%',align:'center',editor:'text'},
+                {field:'mBId',title:'会议室名称',width:'15%',align:'center',editor:{type:'combobox',options:{valueField:'bId',textField:'bName',data:bRows,onSelect:function(data){
+                                var row = $('#dg').datagrid('getSelected');
+                                var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                                var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'mBId'}).target;
+                                bId_choose = thisTarget.combobox('getValue');
+                            }}}},
+                {field:'mUId',title:'用户名称',width:'10%',align:'center'},
                 {field:'mDescribe',title:'留言内容',width:'45%',align:'center',editor:'text'},
             ]],
-            onDblClickRow: onClickCell,
+            //onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
                 var indexs = $(this).datagrid('getEditingRowIndexs');
                 if(indexs.length > 0){
@@ -110,7 +132,7 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./message/list.action",
+    		url:"./message/listAll.action",
     		dataType:"json",
     		data:{},
     		success:function(data){
@@ -172,7 +194,7 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
             if (endEditing()){
                 $('#dg').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'bDescribe'});
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'mDescribe'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
@@ -191,11 +213,11 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
 //            $('#dg').datagrid('insertRow',{'pid':'pid-'});
             $('#dg').datagrid('insertRow',{
                 index: editIndex,  // 索引从0开始
-                row: {'ck': true}
+                row: {'ck': true, 'mUId':loginUser.uName}
             });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
             $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'mDescribe'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
         }
     }
@@ -249,17 +271,16 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
             console.log(row);
             //发ajax请求后台
           //发ajax请求后台
-            if(row.bId == '' || row.bId == null){
+            if(row.mId == '' || row.mId == null){
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./boardroom/save.action",
+        			url:"./message/save.action",
         			dataType:"json",
         			data:{
-        				bName:row.bName,
-        				bNum:row.bNum,
-        				bAdd:row.bAdd,
-        				bEquipment:row.bEquipment,
+                        mBId:bId_choose,
+                        mUId:loginUser.uId,
+                        mDescribe:row.mDescribe,
         			},
         			success:function(data){
         				if(data.status == 'success'){
@@ -273,7 +294,7 @@ var loginUser = JSON.parse(Util.getSession("loginUser"));
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./brand/update.action",
+        			url:"./message/update.action",
         			dataType:"json",
         			data:{
         				bId:row.bId,

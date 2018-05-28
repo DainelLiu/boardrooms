@@ -298,6 +298,27 @@ public class UsersAction {
 		return null;
 	}
 
+	@Action(value = "listAllByDId")
+	public String listAllByDId() throws IOException {
+		String uDId = ServletActionContext.getRequest().getParameter("uDId");
+		String hql="from Users where 1=1 and uDId ='"+uDId+"'";
+		List<Object> usersTypelist = usersDao.getAllByConds(hql);// 获取所有类型数据，不带分页
+		JSONObject jobj = new JSONObject();
+		if (usersTypelist.size() > 0) {
+			// save success
+			jobj.put("mes", "获取成功!");
+			jobj.put("status", "success");
+			jobj.put("data", JsonUtil.toJsonByListObj(usersTypelist));
+		} else {
+			// save failed
+			jobj.put("mes", "获取失败!");
+			jobj.put("status", "error");
+		}
+		ServletActionContext.getResponse().setHeader("content-type", "text/html;charset=UTF-8");
+		ServletActionContext.getResponse().getWriter().write(jobj.toString());
+		return null;
+	}
+
 	@Action(value = "login")
 	public String login() throws IOException {
 		String uName = URLDecoder.decode(ServletActionContext.getRequest().getParameter("uName"), "utf-8");

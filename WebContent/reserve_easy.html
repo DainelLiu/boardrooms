@@ -101,9 +101,11 @@
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./reserve/listAll.action",
+    		url:"./reserve/listAllByDId.action",
     		dataType:"json",
-    		data:{},
+    		data:{
+                resDId:loginUser.uDId
+            },
     		success:function(data){
     			console.log(data);
     			if(data.status == 'success'){

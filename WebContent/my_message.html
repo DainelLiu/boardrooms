@@ -12,6 +12,14 @@
 
     <table id="dg"></table>
 
+    <div id="tb" style="height:auto">
+        <a href="javascript:void(0)" id="delBtn" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false"
+           onclick="removeit()">删除</a>
+        <a href="javascript:void(0)" id="saveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:false"
+           onclick="acceptRow()">保存</a>
+        <a href="javascript:void(0)" id="rejectBtn" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:false"
+           onclick="cancelrow()">撤回</a>
+    </div>
 </div>
 
 <script type="text/javascript" src="lib/jquery.min.js"></script>
@@ -19,10 +27,29 @@
 <script type="text/javascript" src="lib/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="lib/datagrid-detailview.js"></script>
 <script type="text/javascript" src="lib/custom/pageFilter.js"></script>
+<script type="text/javascript" src="lib/custom/util.js"></script>
 <script type="text/javascript">
+var loginUser = JSON.parse(Util.getSession("loginUser"));
+var bId_choose;
     $(function(){
+        var bRows = [];
+        $.ajax({
+            type:"get",
+            async:false,
+            url:"./boardroom/listBySign.action",
+            dataType:"json",
+            data:{},
+            success:function(data){
+                console.log(data);
+                if(data.status == 'success'){
+                    bRows = data.data;
+                }else{
+                    //没有数据或服务器错误
+                }
+            }
+        });
         $('#dg').datagrid({
-            title:'预定情况列表',
+            title:'留言列表',
             width:'auto',
             height:600,
             rownumbers:false,
@@ -34,17 +61,19 @@
             checkOnSelect:true,
             selectOnCheck:true,
             collapsible:false,
+            toolbar:'#tb',
             pageSize:10,
             /* data:getData(), */
             columns:[[
                 {field:'ck',checkbox:true,width:'5%'},
-                {field:'resId',title:'预定编号',width:'25%',align:'center',sortable:true},
-                {field:'resBId',title:'会议室名称',width:'10%',align:'center',editor:'text'},
-                {field:'resDId',title:'部门名称',width:'10%',align:'center',editor:'text'},
-                {field:'resUId',title:'预定人员',width:'10%',align:'center',editor:'text'},
-                {field:'resStarttime',title:'开始时间',width:'15%',align:'center',editor:'text'},
-                {field:'resEndtime',title:'结束时间',width:'15%',align:'center',editor:'text'},
-                {field:'resSign',title:'预定状态',width:'10%',align:'center',editor:'text'},
+                {field:'mId',title:'留言编号',width:'25%',align:'center',sortable:true},
+                {field:'mBId',title:'会议室名称',width:'15%',align:'center',editor:{type:'combobox',options:{valueField:'bId',textField:'bName',data:bRows,onSelect:function(data){
+                                var row = $('#dg').datagrid('getSelected');
+                                var rowIndex = $('#dg').datagrid('getRowIndex',row);//获取行号
+                                var thisTarget = $('#dg').datagrid('getEditor', {'index':rowIndex,'field':'mBId'}).target;
+                                bId_choose = thisTarget.combobox('getValue');
+                            }}}},
+                {field:'mDescribe',title:'留言内容',width:'55%',align:'center',editor:'text'},
             ]],
             onDblClickRow: onClickCell,
             onClickRow:function(rowIndex, rowData){
@@ -95,32 +124,27 @@
 //                $('#rejectBtn').linkbutton('disable');
             }
         }).datagrid('clientPaging');
+        
     });
     function getData(){
     	//获取用户列表
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./reserve/listAll.action",
+    		url:"./message/listAllByUsers.action",
     		dataType:"json",
-    		data:{},
+    		data:{
+                uId:loginUser.uId
+            },
     		success:function(data){
     			console.log(data);
     			if(data.status == 'success'){
    					var rows = [];
        				rows = data.data;
-       			 	for(var i = 0 ; i < rows.length ; i++){
-                     	rows[i].resBId = rows[i].resBId.bName;
-                     	rows[i].resDId = rows[i].resDId.dName;
-                     	rows[i].resUId = rows[i].resUId.uName;
-                     	if(new Date(rows[i].resEndtime) < new Date()){
-                     		rows[i].resSign = '已结束';
-                     	}else if(new Date(rows[i].resStarttime) < new Date()){
-                     		rows[i].resSign = '进行中';
-                     	}else{
-                     		rows[i].resSign = '未开始';
-                     	}
-                 	}
+                    for(var i = 0 ; i < rows.length ; i++){
+                        rows[i].mUId = rows[i].mUId.uName;
+                        rows[i].mBId = rows[i].mBId.bName;
+                    }
        				$('#dg').datagrid('loadData', rows);
     			}else{
     				//没有数据或服务器错误
@@ -171,7 +195,7 @@
             if (endEditing()){
                 $('#dg').datagrid('selectRow', index)
                     .datagrid('beginEdit', index);
-                var ed = $('#dg').datagrid('getEditor', {index:index,field:'dDescribe'});
+                var ed = $('#dg').datagrid('getEditor', {index:index,field:'mDescribe'});
                 ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
                 editIndex = index;
             } else {
@@ -194,7 +218,7 @@
             });
 //            editIndex = $('#dg').datagrid('getRows').length-1;
             $('#dg').datagrid('selectRow', editIndex).datagrid('beginEdit', editIndex);
-            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'bDescribe'});
+            var ed = $('#dg').datagrid('getEditor', {index:editIndex,field:'mDescribe'});
             ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
         }
     }
@@ -211,10 +235,10 @@
                     $.ajax({
             			type:"post",
             			async:true,
-            			url:"./department/delete.action",
+            			url:"./message/delete.action",
             			dataType:"json",
             			data:{
-            				dId:row.dId
+            				mId:row.mId
             			},
             			success:function(data){
             				if(data.status == 'success'){
@@ -248,36 +272,36 @@
             console.log(row);
             //发ajax请求后台
           //发ajax请求后台
-            if(row.dId == '' || row.dId == null){
-            	$.ajax({
-        			type:"post",
-        			async:true,
-        			url:"./department/save.action",
-        			dataType:"json",
-        			data:{
-        				dName:row.dName,
-        				dDescribe:row.dDescribe,
-        				dNumber:row.dNumber
-        			},
-        			success:function(data){
-        				if(data.status == 'success'){
-        					getData();
-        				}else{
-        					alert(data.mes);
-        				}
-        			}
-        		});
+            if(row.mId == '' || row.mId == null){
+                $.ajax({
+                    type:"post",
+                    async:true,
+                    url:"./message/save.action",
+                    dataType:"json",
+                    data:{
+                        mBId:bId_choose,
+                        mUId:loginUser.uId,
+                        mDescribe:row.mDescribe,
+                    },
+                    success:function(data){
+                        if(data.status == 'success'){
+                            getData();
+                        }else{
+                            alert(data.mes);
+                        }
+                    }
+                });
             }else{
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./department/update.action",
+        			url:"./message/update.action",
         			dataType:"json",
         			data:{
-        				dId:row.dId,
-        				dName:row.dName,
-        				dDescribe:row.dDescribe,
-        				dNumber:row.dNumber
+                        mId:row.mId,
+       					mDescribe:row.mDescribe,
+                        mBId:bId_choose,
+                        mUId:loginUser.uId
         			},
         			success:function(data){
         				if(data.status == 'success'){

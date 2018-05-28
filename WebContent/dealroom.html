@@ -404,7 +404,7 @@
             url:'',
             success:function(data){
                 if(data){
-                    $.messager.alert('信息提示','提交成功！','info');
+                    $.messager.alert('信息提示','提交成功！请前往我的预定中查看。','info');
                     $('#ff').form('clear');
                     getAllRooms();
                 }
@@ -422,7 +422,7 @@
         $.ajax({
             type:"get",
             async:true,
-            url:"./boardroom/listAll.action",
+            url:"./boardroom/searchByTime.action",
             dataType:"json",
             data:{
                 resStarttime:$('#starttime').datetimebox('getValue'),
@@ -510,22 +510,6 @@
                     $('#in-table').empty().append(html);
                 }else{
                     //没有数据或服务器错误
-                }
-            }
-        });
-    }
-    function add(){
-        $('#ff').form('submit', {
-            url:'',
-            success:function(data){
-                if(data){
-                    $.messager.alert('信息提示','提交成功！','info');
-                    $('#ff').form('clear');
-                    getAllRooms();
-                }
-                else
-                {
-                    $.messager.alert('信息提示','提交失败！','info');
                 }
             }
         });
