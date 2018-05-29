@@ -9,8 +9,9 @@
 </head>
 <body>
 <div class="container">
-
     <table id="dg_2_2"></table>
+</div>
+<div id="dg_2-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="left:0 !important;top: 0 !important;">
 </div>
 
 <script type="text/javascript" src="lib/jquery.min.js"></script>
@@ -45,12 +46,29 @@
                 {field:'resEndtime',title:'结束时间',width:'35%',align:'center',editor:'text'},
                 {field:'resSign',title:'状态',width:'10%',align:'center',editor:'text'},
                 {field:'option',title:'操作',width:'10%',align:'center',formatter:formatOper},
-            ]]
+            ]],
+//             onDblClickRow: onClickCell,
+//             onClickRow:function(rowIndex, rowData){
+//                 var indexs = $(this).datagrid('getEditingRowIndexs');
+//                 if(indexs.length > 0){
+//                     $.each(indexs,function(index,item){
+//                         $('#dg_2_2').datagrid('rejectChanges', item);
+//                         $('#dg_2_2').datagrid("endEdit", item);
+//                     });
+//                 }
+// //                $('#addBtn').linkbutton('disable');
+// //                $('#delBtn').linkbutton('enable');
+// //                $('#saveBtn').linkbutton('enable');
+// //                $('#rejectBtn').linkbutton('enable');
+//             },
         }).datagrid('clientPaging');
     });
     function formatOper(val,row,index){
-        console.log(val+":"+row+":"+index);
-        return '<a href="javascript:cansleInfo(\''+val+'\')">删除</a>';
+        if(row.resSign == '未开始'){
+            return '<a href="javascript:editInfo(\''+val+'\')">修改</a>&nbsp;&nbsp;<a href="javascript:cansleInfo(\''+val+'\')">取消</a>';
+        }else{
+            return null;
+        }
     }
     function getData(){
         $('#search').val('');
@@ -136,16 +154,19 @@
     function onClickCell(index, field){
         console.log(index);
         console.log(field);
-
-        if (editIndex != index){
-            if (endEditing()){
-                $('#dg_2_2').datagrid('selectRow', index)
-                    .datagrid('beginEdit', index);
-                var ed = $('#dg_2_2').datagrid('getEditor', {index:index,field:'bName'});
-                ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
-                editIndex = index;
-            } else {
-                $('#dg_2_2').datagrid('selectRow', editIndex);
+        if(new Date(field.resStarttime) <= new Date()){
+            alert('该会议已经开始，不可更改!');
+        }else{
+            if (editIndex != index){
+                if (endEditing()){
+                    $('#dg_2_2').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                    var ed = $('#dg_2_2').datagrid('getEditor', {index:index,field:'bName'});
+                    ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                    editIndex = index;
+                } else {
+                    $('#dg_2_2').datagrid('selectRow', editIndex);
+                }
             }
         }
     }
@@ -208,6 +229,27 @@
 //        $('#saveBtn').linkbutton('disable');
 //        $('#rejectBtn').linkbutton('disable');
     }
+    function editInfo(id){
+        $('#dg_2-dialog-2').dialog({
+            closed: false,
+            modal:true,
+            title: "修改预定信息",
+            width:1000,
+            height:500,
+            content:"<iframe id='table-iframe' scrolling='auto' frameborder='0' src='dealroom_update.html?id="+id+"' style='width:100%; height:100%; display:block;'></iframe>",
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: updateRes
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#dg_2-dialog-2').dialog('close');
+                }
+            }]
+        });
+    }
     // 保存方法（添加修改用了一个方法accept()）
     function acceptRow(){
         //成功之后
@@ -260,6 +302,39 @@
                 });
             }
         }
+    }
+    function updateRes(){
+        var _my = $("#table-iframe").contents();
+        /*console.log(_my.find('#ff'))
+        _my.find('#ff').form('submit', {
+            url:'',
+            success:function(data){
+                if(data){
+                    $.messager.alert('信息提示','提交成功！请前往我的预定中查看。','info');
+                    getData();
+                    $('#dg_2-dialog-2').dialog('close');
+                }
+                else
+                {
+                    $.messager.alert('信息提示','提交失败！','info');
+                }
+            }
+        });*/
+        $.ajax({
+            type:"post",
+            async:true,
+            url:"./reserve/update.action",
+            dataType:"json",
+            data:_my.find('#ff').serialize(),
+            success:function(data){
+                if(data.status == 'success'){
+                    getData();
+                    $('#dg_2-dialog-2').dialog('close');
+                }else{
+                    alert(data.mes);
+                }
+            }
+        });
     }
     //取消编辑
     function cancelrow(){
