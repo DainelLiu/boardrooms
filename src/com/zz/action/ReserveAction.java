@@ -176,7 +176,18 @@ public class ReserveAction {
 	public String update() throws IOException {
 
 		String resId = ServletActionContext.getRequest().getParameter("resId");
+		String resBId = ServletActionContext.getRequest().getParameter("resBId");
+		String resDId = ServletActionContext.getRequest().getParameter("resDId");
+		String resUId = ServletActionContext.getRequest().getParameter("resUId");
+		String resStarttime = ServletActionContext.getRequest().getParameter("resStarttime");
+		String resEndtime = ServletActionContext.getRequest().getParameter("resEndtime");
 		Reserve reserve = reserveDao.getById(resId);
+		reserve.setResBId(boardroomDao.getById(resBId));
+		reserve.setResDId(departmentDao.getById(resDId));
+		reserve.setResUId(usersDao.getById(resUId));
+		reserve.setResStarttime(resStarttime);
+		reserve.setResSign(1);
+		reserve.setResEndtime(resEndtime);
 		JSONObject jobj = new JSONObject();
 
 		if (reserveDao.update(reserve)) {
