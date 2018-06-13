@@ -128,7 +128,7 @@
         $.ajax({
     		type:"get",
     		async:true,
-    		url:"./boardroom/list.action",
+    		url:"./boardroom/listAll.action",
     		dataType:"json",
     		data:{},
     		success:function(data){
@@ -301,11 +301,14 @@
             	$.ajax({
         			type:"post",
         			async:true,
-        			url:"./brand/update.action",
+        			url:"./boardroom/update.action",
         			dataType:"json",
         			data:{
         				bId:row.bId,
-       					bDescribe:row.bDescribe
+                        bName:row.bName,
+                        bNum:row.bNum,
+                        bAdd:row.bAdd,
+                        bEquipment:row.bEquipment
         			},
         			success:function(data){
         				if(data.status == 'success'){
