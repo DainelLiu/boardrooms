@@ -138,6 +138,7 @@ public class BoardRoomAction {
 		String bNum = ServletActionContext.getRequest().getParameter("bNum");
 		String bAdd = ServletActionContext.getRequest().getParameter("bAdd");
 		String bEquipment = ServletActionContext.getRequest().getParameter("bEquipment");
+		String bSign = ServletActionContext.getRequest().getParameter("bSign");
 		BoardRoom boardroom = boardroomDao.getById(bId);
 		
 		if (bName != null && !"".equals(bName)) {
@@ -151,6 +152,9 @@ public class BoardRoomAction {
 		}
 		if (bEquipment != null && !"".equals(bEquipment)) {
 			boardroom.setbEquipment(Integer.parseInt(bEquipment));
+		}
+		if (bSign != null && !"".equals(bSign)) {
+			boardroom.setbEquipment(Integer.parseInt(bSign));
 		}
 		
 		
